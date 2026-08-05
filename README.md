@@ -134,7 +134,4 @@ Start with the [documentation index](docs/README.md). Key guides include:
 
 ## License
 
-No project license has been selected yet. Copyright remains with the repository
-owner; publication does not grant permission to copy, modify, or redistribute
-the project. Add an explicit license before inviting external reuse or
-contributions.
+This project is licensed under the [GNU General Public License v3.0](LICENSE).

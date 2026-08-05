@@ -1,0 +1,51 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "OpenCode: Local gpt-oss",
+      "type": "shell",
+      "command": "make",
+      "args": ["agent", "PROFILE=gpt-oss"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated",
+        "clear": false
+      },
+      "runOptions": {"instanceLimit": 1}
+    },
+    {
+      "label": "OpenCode: Local Granite",
+      "type": "shell",
+      "command": "make",
+      "args": ["agent", "PROFILE=granite"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated"
+      },
+      "runOptions": {"instanceLimit": 1}
+    },
+    {
+      "label": "OpenCode: Start restricted web",
+      "type": "shell",
+      "command": "make",
+      "args": ["search-start"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": []
+    },
+    {
+      "label": "OpenCode: Stop restricted web",
+      "type": "shell",
+      "command": "make",
+      "args": ["search-stop"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": []
+    }
+  ]
+}

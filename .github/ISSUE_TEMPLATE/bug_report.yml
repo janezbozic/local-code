@@ -1,0 +1,42 @@
+name: Bug report
+description: Report a reproducible non-sensitive problem
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include private code, prompts, documents, credentials, internal paths, or exploit details. Use private vulnerability reporting for security issues.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Commit
+      description: Commit hash or release identifier.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: macOS version, Apple Silicon model, memory, and selected model profile. Omit usernames and private paths.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction
+      description: Minimal commands and sanitized output.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation results
+      description: Results of make check, make test, and make network-audit when relevant.

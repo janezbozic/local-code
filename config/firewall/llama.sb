@@ -1,0 +1,9 @@
+(version 1)
+(allow default)
+
+; llama.cpp may serve and call only loopback addresses.
+(deny network-outbound
+  (require-not (remote ip "localhost:*")))
+(deny network-inbound
+  (require-not (local ip "localhost:*")))
+

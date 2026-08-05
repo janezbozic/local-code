@@ -1,0 +1,11 @@
+(version 1)
+(allow default)
+
+; Document converters may use local IPC but never non-loopback IP networking.
+(deny network-outbound
+  (require-not (remote ip "localhost:*")))
+
+; LibreOffice uses local Unix-domain IPC during conversion. Incoming IP
+; listeners remain denied explicitly without blocking that required IPC.
+(deny network-inbound
+  (local ip "*:*"))

@@ -1,0 +1,25 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Local toolchains, models, and runtime state
+.tools/
+.runtime/
+models/*
+!models/.gitkeep
+
+# Private inputs and generated artifacts
+knowledge/originals/*
+!knowledge/originals/.gitkeep
+output/*
+!output/.gitkeep
+
+# Python and test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# Benchmark history is runtime data; the latest acceptance record is tracked.
+benchmarks/history/

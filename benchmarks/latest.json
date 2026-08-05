@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-08-05T17:49:57.419532+00:00",
+  "passed": true,
+  "host": {
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "python": "3.14.6"
+  },
+  "server": {
+    "endpoint": "http://127.0.0.1:8080",
+    "health": {
+      "status": "ok"
+    },
+    "health_seconds": 0.009253374999389052,
+    "pid": 18806,
+    "models": {
+      "models": [
+        {
+          "name": "granite-4.1-8b-Q4_K_M.gguf",
+          "model": "granite-4.1-8b-Q4_K_M.gguf",
+          "modified_at": "",
+          "size": "",
+          "digest": "",
+          "type": "model",
+          "description": "",
+          "tags": [
+            ""
+          ],
+          "capabilities": [
+            "completion"
+          ],
+          "parameters": "",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "",
+            "families": [
+              ""
+            ],
+            "parameter_size": "",
+            "quantization_level": ""
+          }
+        }
+      ],
+      "object": "list",
+      "data": [
+        {
+          "id": "granite-4.1-8b-Q4_K_M.gguf",
+          "aliases": [],
+          "tags": [],
+          "object": "model",
+          "created": 1785952193,
+          "owned_by": "llamacpp",
+          "meta": {
+            "vocab_type": 2,
+            "n_vocab": 100352,
+            "n_ctx": 16384,
+            "n_ctx_train": 131072,
+            "n_embd": 4096,
+            "n_params": 8791592960,
+            "size": 5344346112
+          }
+        }
+      ]
+    },
+    "context_tokens": 16384,
+    "process_before": {
+      "rss_kib": 5350656,
+      "vsz_kib": 446986800,
+      "cpu_percent": 0.2,
+      "elapsed": "36:03",
+      "command": "<repo>/.tools/llama.cpp/build/bin/llama-server --model <repo>/models/granite-4.1-8b-Q4_K_M.gguf --host 127.0.0.1 --port 8080 --ctx-size 16384 --parallel 1 --n-gpu-layers 999 --jinja"
+    },
+    "process_after": {
+      "rss_kib": 5356480,
+      "vsz_kib": 446986800,
+      "cpu_percent": 0.2,
+      "elapsed": "36:07",
+      "command": "<repo>/.tools/llama.cpp/build/bin/llama-server --model <repo>/models/granite-4.1-8b-Q4_K_M.gguf --host 127.0.0.1 --port 8080 --ctx-size 16384 --parallel 1 --n-gpu-layers 999 --jinja"
+    }
+  },
+  "generation": {
+    "expected": "BENCHMARK_OK",
+    "actual": "BENCHMARK_OK",
+    "seconds": 0.2674621249898337,
+    "prompt_tokens": 15,
+    "completion_tokens": 4,
+    "tokens_per_second": 14.955388543899595
+  },
+  "tool_call": {
+    "passed": true,
+    "seconds": 0.9483442500059027,
+    "finish_reason": "tool_calls",
+    "calls": [
+      {
+        "type": "function",
+        "function": {
+          "name": "run_checks",
+          "arguments": "{}"
+        },
+        "id": "10pnPPoizlCqAnAZTXaIN8ciEIWIkgeP"
+      }
+    ]
+  },
+  "repository_checks": {
+    "seconds": 2.2018166249908973,
+    "check_exit": 0,
+    "test_exit": 0,
+    "check_output": "static strict-local policy checks passed\nsandbox probe passed: loopback allowed, non-loopback denied\nWorkbench checks passed.\n",
+    "test_output": "static strict-local policy checks passed\nsandbox probe passed: loopback allowed, non-loopback denied\nWorkbench tests passed.\n............\n----------------------------------------------------------------------\nRan 12 tests in 0.001s\n\nOK\n.\n----------------------------------------------------------------------\nRan 1 test in 0.244s\n\nOK\n"
+  },
+  "system": {
+    "swap_before": "total = 2048.00M  used = 1253.06M  free = 794.94M  (encrypted)",
+    "swap_after": "total = 2048.00M  used = 1253.06M  free = 794.94M  (encrypted)",
+    "memory_pressure": "The system has 25769803776 (1572864 pages with a page size of 16384).\nSystem-wide memory free percentage: 28%",
+    "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded",
+    "benchmark_max_rss": 31113216,
+    "benchmark_max_rss_unit": "bytes"
+  },
+  "limitations": [
+    "Cold-load duration is taken from the separately timed model-start operation.",
+    "macOS compressed-memory attribution is system-wide and must be reviewed in Activity Monitor.",
+    "Thermal output is best-effort because powermetrics requires elevated privileges."
+  ]
+}

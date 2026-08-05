@@ -1,0 +1,8 @@
+# Exact direct dependency pins. Their reviewed wheel hashes are recorded in
+# config/versions.env; the resolved wheel cache remains project-local.
+docling==2.118.0
+pypdf==6.14.2
+pdfplumber==0.11.10
+python-docx==1.2.0
+openpyxl==3.1.5
+python-pptx==1.0.2

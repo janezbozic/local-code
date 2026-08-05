@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-08-05T17:53:57.511890+00:00",
+  "sequential": true,
+  "parallel_slots": 1,
+  "model": "granite-4.1-8b-Q4_K_M.gguf",
+  "profiles": [
+    {
+      "context_tokens": 8192,
+      "reported_context_tokens": 8192,
+      "cold_load_seconds": 0.8296428750036284,
+      "generation": {
+        "seconds": 0.33703545900061727,
+        "actual": "PROFILE_OK",
+        "prompt_tokens": 14,
+        "completion_tokens": 3,
+        "tokens_per_second": 8.901140577005298
+      },
+      "tool_call": {
+        "seconds": 2.047263207990909,
+        "passed": true
+      },
+      "process": {
+        "rss_kib": 6630640,
+        "cpu_percent": 5.0,
+        "elapsed": "00:04"
+      },
+      "swap_before": "total = 2048.00M  used = 1253.06M  free = 794.94M  (encrypted)",
+      "swap_after": "total = 2048.00M  used = 1253.06M  free = 794.94M  (encrypted)",
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded",
+      "passed": true
+    },
+    {
+      "context_tokens": 16384,
+      "reported_context_tokens": 16384,
+      "cold_load_seconds": 0.8188217919960152,
+      "generation": {
+        "seconds": 0.3285844999772962,
+        "actual": "PROFILE_OK",
+        "prompt_tokens": 14,
+        "completion_tokens": 3,
+        "tokens_per_second": 9.130071565175129
+      },
+      "tool_call": {
+        "seconds": 2.054784333013231,
+        "passed": true
+      },
+      "process": {
+        "rss_kib": 7940560,
+        "cpu_percent": 3.6,
+        "elapsed": "00:03"
+      },
+      "swap_before": "total = 2048.00M  used = 1253.06M  free = 794.94M  (encrypted)",
+      "swap_after": "total = 2048.00M  used = 1253.06M  free = 794.94M  (encrypted)",
+      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded",
+      "passed": true
+    }
+  ],
+  "accepted_context_tokens": 16384,
+  "passed": true
+}

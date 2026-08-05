@@ -1,0 +1,7 @@
+{
+  "terminal.integrated.env.osx": {
+    "PATH": "${workspaceFolder}/tools/opencode/bin:${env:PATH}"
+  },
+  "extensions.autoCheckUpdates": false,
+  "extensions.autoUpdate": false
+}

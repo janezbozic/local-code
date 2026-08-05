@@ -1,0 +1,9 @@
+(version 1)
+(allow default)
+
+; Permit Unix sockets and loopback, but deny non-loopback IP networking.
+(deny network-outbound
+  (require-not (remote ip "localhost:*")))
+(deny network-inbound
+  (require-not (local ip "localhost:*")))
+

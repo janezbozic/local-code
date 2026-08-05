@@ -1,0 +1,6 @@
+#!/bin/zsh
+
+set -eu
+
+script_dir="${0:A:h}"
+exec "${script_dir}/../agent.sh" "$@"

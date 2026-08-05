@@ -1,0 +1,6 @@
+{
+  "title": "Repository-local OpenCode V1 configuration",
+  "description": "Offline schema marker. Runtime structure is validated by the pinned OpenCode CLI and tests/test_policy.py.",
+  "type": "object",
+  "additionalProperties": true
+}

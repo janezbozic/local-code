@@ -13,7 +13,8 @@ download is part of the normal workflow.
 
 - Exact-pinned `opencode-ai@1.18.13` with isolated project-local state.
 - Metal-enabled `llama.cpp` with one serialized inference slot.
-- IBM Granite 4.1 8B as the default model and gpt-oss-20b as an optional profile.
+- IBM Granite 4.1 8B as the default model, gpt-oss-20b as an optional profile,
+  and Qwen3.6 27B Q4_K_M as a pinned but unaccepted provisional profile.
 - Six bounded agent roles with one-level delegation and fail-closed permissions.
 - Optional SearXNG research through a DLP-, SSRF-, redirect-, and size-limited
   localhost MCP gateway.
@@ -64,6 +65,9 @@ For gpt-oss, both commands must use the same profile:
 make model-start PROFILE=gpt-oss
 make agent PROFILE=gpt-oss
 ```
+
+Qwen3.6 27B uses `PROFILE=qwen36`. Its 19.1 GB Q4_K_M file is not installed
+automatically and has not passed this 24 GB Mac's memory and tool-call gates.
 
 Stop foreground processes with `Ctrl-C`. Background model operation is
 available with `make model-start BACKGROUND=1` and must be stopped using

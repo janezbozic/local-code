@@ -50,10 +50,15 @@ build, confirms that port 8080 is free, and starts `llama-server` on
 |---|---|---:|---|
 | `granite` | Granite 4.1 8B Q4_K_M | 16,384 | Default, accepted |
 | `gpt-oss` | gpt-oss-20b MXFP4 | 8,192 runtime profile | Optional larger model |
+| `qwen36` | Qwen3.6 27B Q4_K_M | 8,192 | Provisional; not accepted on 24 GB |
 
 The tracked profile benchmark also records a 16K gpt-oss comparison, but the
 runtime profile currently remains 8K. Always match the model server and agent
 profile.
+
+Qwen3.6's GGUF metadata advertises a much larger native context, but this
+workbench deliberately starts at 8K because the 19.1 GB quantized weights leave
+limited memory headroom on the target machine.
 
 ### Restricted web research
 

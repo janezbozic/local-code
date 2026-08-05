@@ -54,6 +54,9 @@ def main() -> int:
     gpt_oss = local_provider["models"].get("gpt-oss-20b", {})
     if gpt_oss.get("limit") != {"context": 16384, "output": 2048}:
         fail("selectable gpt-oss-20b profile is missing or malformed")
+    qwen36 = local_provider["models"].get("qwen3.6-27b", {})
+    if qwen36.get("limit") != {"context": 8192, "output": 2048}:
+        fail("selectable provisional Qwen3.6-27B profile is missing or malformed")
     if config.get("compaction") != {
         "auto": True,
         "prune": True,
@@ -171,6 +174,7 @@ def main() -> int:
     for profile, expected in {
         "granite": ("granite-4.1-8b", versions.get("MODEL_SHA256")),
         "gpt-oss": ("gpt-oss-20b", versions.get("GPT_OSS_MODEL_SHA256")),
+        "qwen36": ("qwen3.6-27b", versions.get("QWEN36_MODEL_SHA256")),
     }.items():
         values = parse_env(ROOT / f"config/llama/profiles/{profile}.env")
         if values.get("LLAMA_MODEL_ID") != expected[0] or values.get("LLAMA_MODEL_SHA256") != expected[1]:

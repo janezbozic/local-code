@@ -52,3 +52,22 @@ shasum -a 256 models/gpt-oss-20b-mxfp4.gguf
 ```
 
 The SHA-256 must be `be37a636aca0fc1aae0d32325f82f6b4d21495f06823b5fbc1898ae0303e9935` and the verified downloaded size is 12,109,566,560 bytes. Delete or quarantine a mismatched download; never start it.
+
+## 6. Optional provisional Qwen3.6 27B model (17.8 GiB)
+
+```sh
+curl --fail --location --output models/Qwen3.6-27B-Q4_K_M.gguf https://huggingface.co/ggml-org/Qwen3.6-27B-GGUF/resolve/8a7ee08e8b9bfb857107ecc25a5599d2f38b76f8/Qwen3.6-27B-Q4_K_M.gguf
+shasum -a 256 models/Qwen3.6-27B-Q4_K_M.gguf
+```
+
+The exact size must be 19,095,766,304 bytes and SHA-256 must be
+`65b753ea835627f7b511143c6ceb976525c7f21f5df8c664bc0a9c23d1c49921`.
+The immutable GGUF revision is
+`8a7ee08e8b9bfb857107ecc25a5599d2f38b76f8`; its `.src_sha` records official
+Qwen source revision `6a9e13bd6fc8f0983b9b99948120bc37f49c13e9`.
+
+This profile is not accepted yet. The file consumes most of a 24 GB machine's
+available memory before KV cache and operating-system use. After explicit
+download approval, start at 8K context and run `make benchmark-qwen36` with port
+8080 free. A failed memory, swap, thermal, generation, or tool-call gate must
+leave Granite as the default.

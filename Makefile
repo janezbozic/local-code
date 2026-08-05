@@ -1,7 +1,7 @@
 SHELL := /bin/zsh
 .DEFAULT_GOAL := help
 
-.PHONY: help check test benchmark benchmark-profiles benchmark-gpt-oss model-start model-stop agent network-audit \
+.PHONY: help check test benchmark benchmark-profiles benchmark-gpt-oss benchmark-qwen36 model-start model-stop agent network-audit \
 	search-start search-stop document-import document-export document-render
 
 help:
@@ -11,8 +11,9 @@ help:
 	@echo "  make benchmark  # requires model server"
 	@echo "  make benchmark-profiles  # requires port 8080 to be free"
 	@echo "  make benchmark-gpt-oss  # sequential 8K/16K acceptance"
+	@echo "  make benchmark-qwen36  # provisional sequential 8K/16K gate"
 	@echo "  make network-audit"
-	@echo "  make model-start [PROFILE=granite|gpt-oss] [BACKGROUND=1]"
+	@echo "  make model-start [PROFILE=granite|gpt-oss|qwen36] [BACKGROUND=1]"
 	@echo "  make model-stop"
 	@echo "  make agent"
 	@echo "  make search-start | make search-stop"
@@ -34,6 +35,9 @@ benchmark-profiles:
 
 benchmark-gpt-oss:
 	@python3 ./tools/model/profile-benchmark.py --profile gpt-oss
+
+benchmark-qwen36:
+	@python3 ./tools/model/profile-benchmark.py --profile qwen36
 
 model-start:
 	@BACKGROUND="$(BACKGROUND)" MODEL_PROFILE="$(or $(PROFILE),granite)" ./tools/model/start.sh

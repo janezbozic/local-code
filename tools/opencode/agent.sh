@@ -9,7 +9,8 @@ profile="${MODEL_PROFILE:-granite}"
 case "${profile}" in
   granite) model_id="granite-4.1-8b" ;;
   gpt-oss) model_id="gpt-oss-20b" ;;
-  *) die "unknown MODEL_PROFILE '${profile}'; choose granite or gpt-oss" ;;
+  qwen36) model_id="qwen3.6-27b" ;;
+  *) die "unknown MODEL_PROFILE '${profile}'; choose granite, gpt-oss, or qwen36" ;;
 esac
 opencode_bin="${OPENCODE_BIN:-${root}/.tools/opencode-v1/node_modules/.bin/opencode}"
 rg_bin="${RG_BIN:-$(command -v rg 2>/dev/null || true)}"

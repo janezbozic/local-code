@@ -26,7 +26,7 @@ Last updated: 2026-08-05
 ## Milestone 1 decisions
 
 - OpenCode V1 is selected and exact-pinned to npm package `opencode-ai@1.18.13`; upgrades remain manual. No custom VS Code extension is maintained by this repository.
-- The only configured provider is `local-llama`, using `http://127.0.0.1:8080/v1`. The accepted default is IBM Granite 4.1 8B Q4_K_M with model ID `granite-4.1-8b`; it passed a native llama.cpp structured tool-call test. The larger gpt-oss-20b model remains available through its explicit profile.
+- The only configured provider is `local-llama`, using `http://127.0.0.1:8080/v1`. The accepted default is IBM Granite 4.1 8B Q4_K_M with model ID `granite-4.1-8b`; it passed a native llama.cpp structured tool-call test. The larger gpt-oss-20b model remains available through its explicit profile. Qwen3.6 27B Q4_K_M is exact-pinned as a provisional 8K profile but remains unaccepted until it passes the memory, swap, thermal, generation, and tool-call gates on the 24 GB target.
 - OpenCode state is isolated under `.runtime/opencode`; existing global credentials and plugins are not loaded.
 - `sandbox-exec` enforces non-loopback denial. Its deprecated status is an explicit risk, mitigated by a mandatory behavioral probe.
 - llama.cpp is built inside `.tools/llama.cpp` with Metal enabled. Models reside under gitignored `models/`.

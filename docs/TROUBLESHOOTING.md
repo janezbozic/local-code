@@ -53,6 +53,10 @@ The agent and server profiles must match. For gpt-oss, use `PROFILE=gpt-oss` on
 both `model-start` and `agent`. A model ID selection does not load a different
 GGUF file into an already-running server.
 
+The same rule applies to Qwen3.6 with `PROFILE=qwen36`. If it is killed during
+load or causes heavy swap, the 24 GB machine does not have enough safe headroom
+for the selected context; stop and keep the profile provisional.
+
 ## `--port cannot be used with --mini`
 
 Use `tools/opencode/bin/opencode` or `make agent`, not a stale copy of an older

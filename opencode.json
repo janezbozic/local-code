@@ -33,6 +33,17 @@
             "context": 16384,
             "output": 2048
           }
+        },
+        "qwen3.6-27b": {
+          "name": "Qwen3.6 27B Q4_K_M (local, provisional)",
+          "modalities": {
+            "input": ["text"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 8192,
+            "output": 2048
+          }
         }
       }
     }

@@ -2,6 +2,22 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "OpenCode: Local Qwen3.6 27B",
+      "type": "shell",
+      "command": "make",
+      "args": ["agent", "PROFILE=qwen36"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated",
+        "clear": false
+      },
+      "runOptions": {"instanceLimit": 1}
+    },
+    {
       "label": "OpenCode: Local gpt-oss",
       "type": "shell",
       "command": "make",

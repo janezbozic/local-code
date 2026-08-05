@@ -9,7 +9,8 @@ The repository currently supports:
 - Zsh, Make, Git, Python 3, Node.js/npm, CMake, `jq`, `shellcheck`, `curl`,
   `lsof`, and standard macOS tools including `sandbox-exec` and `shasum`;
 - sufficient disk space for local builds, wheel caches, and models. Granite is
-  about 5.35 GB and gpt-oss is about 12.11 GB before runtime caches.
+  about 5.35 GB, gpt-oss about 12.11 GB, and the provisional Qwen3.6 Q4_K_M
+  file about 19.10 GB before runtime caches.
 
 Other operating systems are not currently supported because the network
 boundary and process checks are macOS-specific.
@@ -89,7 +90,12 @@ Download it only from the immutable revision documented in
 size and SHA-256. The optional gpt-oss model follows the same process and lives
 at `models/gpt-oss-20b-mxfp4.gguf`.
 
-Do not rename an unverified file into either expected path.
+Qwen3.6 27B is an optional provisional profile at
+`models/Qwen3.6-27B-Q4_K_M.gguf`. On a 24 GB Mac, its 19.1 GB weights leave
+little headroom for the operating system, KV cache, and runtime allocations.
+Install it only if you accept that it may fail the memory/swap gate.
+
+Do not rename an unverified file into an expected model path.
 
 ## 6. Optional restricted search
 

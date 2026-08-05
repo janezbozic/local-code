@@ -26,6 +26,16 @@ make model-start PROFILE=gpt-oss
 make agent PROFILE=gpt-oss
 ```
 
+The provisional Qwen3.6 profile uses:
+
+```sh
+make model-start PROFILE=qwen36
+make agent PROFILE=qwen36
+```
+
+Do not treat Qwen3.6 as accepted until `make benchmark-qwen36` passes without
+new swap use or thermal warnings. Its Q4_K_M weights alone are about 19.1 GB.
+
 The agent profile must match the currently running server. Never start both
 models concurrently. The model server listens only on `127.0.0.1:8080`.
 

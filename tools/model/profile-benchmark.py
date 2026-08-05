@@ -17,6 +17,7 @@ PROFILE = ROOT / "config/firewall/llama.sb"
 MODELS = {
     "granite": (ROOT / "models/granite-4.1-8b-Q4_K_M.gguf", "granite-4.1-8b", ROOT / "benchmarks/profiles.json"),
     "gpt-oss": (ROOT / "models/gpt-oss-20b-mxfp4.gguf", "gpt-oss-20b", ROOT / "benchmarks/profiles-gpt-oss.json"),
+    "qwen36": (ROOT / "models/Qwen3.6-27B-Q4_K_M.gguf", "qwen3.6-27b", ROOT / "benchmarks/profiles-qwen36.json"),
 }
 
 

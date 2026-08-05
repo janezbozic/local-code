@@ -15,5 +15,9 @@ is unloaded before the next profile starts.
 and writes `profiles-gpt-oss.json`. A failed profile does not change the default
 Granite selection.
 
+`make benchmark-qwen36` is the required provisional gate for Qwen3.6 27B and
+writes `profiles-qwen36.json`. On the 24 GB target, monitor memory pressure and
+swap closely; the 19.1 GB model file leaves little runtime headroom.
+
 Benchmark history belongs in ignored `benchmarks/history`. Review records for
 private paths or prompt content before committing them.

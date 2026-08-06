@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 # shellcheck disable=SC2154
 profile="${MODEL_PROFILE:-gpt-oss}"

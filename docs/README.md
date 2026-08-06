@@ -13,10 +13,12 @@
 
 - [Architecture](ARCHITECTURE.md): components, data flow, ports, state, and
   trust boundaries.
-- [Sandbox boundary](SANDBOX.md): behavioral probes and replacement path for
-  deprecated `sandbox-exec`.
+- [Sandbox boundary](SANDBOX.md): macOS Seatbelt and Linux systemd-run backends.
 - [Network and process isolation](../config/firewall/README.md): threat model
   and enforcement layers.
+- [Linux approvals](MILESTONE_7_APPROVALS.md): reviewed Linux build commands;
+  acceptance pending host evidence
+  ([LINUX_ACCEPTANCE.md](../benchmarks/LINUX_ACCEPTANCE.md)).
 - [Bounded agents](../agents/README.md): roles, permissions, and delegation.
 - [Execution plan](../PLANS.md): implemented milestones and design decisions.
 - [Security policy](../SECURITY.md): supported scope and vulnerability reports.
@@ -32,6 +34,7 @@
 
 - [Core runtime approvals](MILESTONE_2_APPROVALS.md)
 - [Restricted-search approvals](MILESTONE_3_APPROVALS.md)
+- [Linux platform approvals](MILESTONE_7_APPROVALS.md)
 
 These approval records preserve exact versions, revisions, hashes, and commands.
 They are intentionally separate from normal operation because the workbench

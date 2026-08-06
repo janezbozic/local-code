@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 set -eu
 
@@ -8,7 +8,7 @@ cd "${root}"
 python3 tests/test_policy.py
 python3 tests/test_web_gateway.py
 python3 tests/test_document_policy.py
-python3 tools/sandbox-probe.py --profile config/firewall/opencode.sb
+python3 tools/sandbox-probe.py --profile opencode
 
 if [[ -x .venv/documents/bin/python ]]; then
   .venv/documents/bin/python tests/test_documents.py

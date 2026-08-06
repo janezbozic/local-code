@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 set -eu
 
@@ -12,7 +12,6 @@ source "${script_dir}/load-profile.sh"
 mkdir -p "${root}/.runtime/pids" "${root}/.runtime/logs"
 server="${root}/${LLAMA_SERVER}"
 model="${root}/${LLAMA_MODEL}"
-profile="${root}/config/firewall/llama.sb"
 cd "${root}"
 args=(
   --model "${model}"
@@ -23,10 +22,11 @@ args=(
   --n-gpu-layers "${LLAMA_GPU_LAYERS}"
   --jinja
 )
+sandbox=("${root}/tools/sandbox/run.sh" --profile llama --)
 
 if [[ "${BACKGROUND:-}" == "1" ]]; then
   log_file="${root}/.runtime/logs/llama-server.log"
-  /usr/bin/sandbox-exec -f "${profile}" "${server}" "${args[@]}" >"${log_file}" 2>&1 &
+  "${sandbox[@]}" "${server}" "${args[@]}" >"${log_file}" 2>&1 &
   pid=$!
   sleep 1
   kill -0 "${pid}" 2>/dev/null || die "llama-server exited during startup; inspect ${log_file}"
@@ -55,4 +55,4 @@ fi
 
 print -- "Starting llama-server in the foreground on ${LLAMA_HOST}:${LLAMA_PORT}; stop with Ctrl-C."
 print -- "Model profile: ${MODEL_PROFILE:-gpt-oss} (${LLAMA_MODEL_ID}, context ${LLAMA_CONTEXT})."
-exec /usr/bin/sandbox-exec -f "${profile}" "${server}" "${args[@]}"
+exec "${sandbox[@]}" "${server}" "${args[@]}"

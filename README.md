@@ -1,6 +1,7 @@
 # Local Code
 
-Local Code is a privacy-first agent workbench for Apple Silicon Macs. It runs
+Local Code is a privacy-first agent workbench for Apple Silicon Macs, with
+Linux x86_64 scaffolding in-tree (acceptance pending host evidence). It runs
 OpenCode V1 against local `llama.cpp` inference, places every normal runtime
 behind a loopback-only network boundary, and adds optional restricted web
 research and preserving document workflows.
@@ -12,11 +13,12 @@ download is part of the normal workflow.
 ## What is included
 
 - Exact-pinned `opencode-ai@1.18.13` with isolated project-local state.
-- Metal-enabled `llama.cpp` with one serialized inference slot.
+- Metal (macOS) or CUDA/CPU (Linux) `llama.cpp` with one serialized inference slot.
 - IBM Granite 4.1 8B as a selectable profile, gpt-oss-20b as the accepted
-  default (128K context), and provisional `coder` / Qwen3.6 profiles that remain
-  unaccepted until their tool-call and memory gates pass.
-- Supervised `make up` / `make down` session lifecycle without login items.
+  default (128K context on macOS evidence), and provisional `coder` / Qwen3.6
+  profiles that remain unaccepted until their tool-call and memory gates pass.
+- Supervised `make up` / `make down` session lifecycle without login items or
+  systemd services.
 - Six bounded agent roles with one-level delegation and fail-closed permissions.
 - Optional SearXNG research through a DLP-, SSRF-, redirect-, and size-limited
   localhost MCP gateway.
@@ -27,13 +29,21 @@ download is part of the normal workflow.
 
 ## Platform and status
 
-The current implementation targets macOS on Apple Silicon and has been exercised
-on a 24 GB Mac. It depends on Apple's deprecated `sandbox-exec`; startup tests
-its actual behavior and fails closed if loopback access or non-loopback denial
-does not behave as expected.
+| Platform | Status | Notes |
+|---|---|---|
+| macOS / Apple Silicon | **Supported** | Proven path: Seatbelt, Metal, gpt-oss 128K evidence in `benchmarks/`. |
+| Linux x86_64 | **Code-complete; acceptance pending** | Sandbox façade, CUDA/CPU preflight, and docs are in-tree. Do not advertise full Linux support until `OPENCODE_BINARY_SHA256_LINUX_X64` is filled and `benchmarks/*-linux.json` is recorded on a real host ([benchmarks/LINUX_ACCEPTANCE.md](benchmarks/LINUX_ACCEPTANCE.md)). |
+| Windows | Not supported | Follow-up; WSL2 may reuse the Linux path later. |
 
-All six milestones in [PLANS.md](PLANS.md) are implemented. Recorded benchmark
-results are available in [benchmarks](benchmarks/README.md).
+Startup tests the active sandbox backend and fails closed if loopback access or
+non-loopback denial does not behave as expected.
+
+This repository is publishable as a **macOS-first** local workbench. Linux
+scaffolding is ready for bring-up; production Linux claims wait on host
+evidence. Provisional profiles (`coder`, Qwen3.6) remain unaccepted on every OS.
+
+All seven milestones in [PLANS.md](PLANS.md) are implemented. Recorded macOS
+benchmark results are available in [benchmarks](benchmarks/README.md).
 
 ## Quick start
 

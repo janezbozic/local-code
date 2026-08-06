@@ -1,46 +1,55 @@
-# Sandbox boundary and replacement path
+# Sandbox boundary and platform backends
 
-## Current control
+## Contract
 
-Normal OpenCode, llama.cpp, and document conversion processes run under
-`sandbox-exec` profiles in `config/firewall/`. Each profile allows loopback and
-denies non-loopback IP networking. `make check`, model/OpenCode preflight, and
-`make test` run a behavioral probe that fails closed if loopback is blocked or
-an external IP is allowed.
+OpenCode, llama.cpp, and document conversion must allow loopback networking and
+deny non-loopback IP destinations. `make check`, preflight, and `make test` run
+a behavioral probe that fails closed if either side of that contract fails.
 
-`sandbox-exec` is deprecated by Apple. Availability and observed behavior are
-startup prerequisites, not a permanent guarantee.
+Search (SearXNG + gateway) intentionally crosses the external boundary and is
+not wrapped by this jail.
+
+## macOS backend
+
+Processes run under `sandbox-exec` Seatbelt profiles in `config/firewall/*.sb`.
+`sandbox-exec` is deprecated by Apple. Availability and observed behavior remain
+startup prerequisites on macOS.
+
+## Linux backend (Milestone 7)
+
+**Status:** implemented in-tree; not a fully accepted publish path until
+[LINUX_ACCEPTANCE.md](../benchmarks/LINUX_ACCEPTANCE.md) is completed on a real
+host. macOS remains the proven platform.
+
+Linux uses `tools/sandbox/run.sh`, which executes:
+
+```sh
+systemd-run --user --collect \
+  --property=IPAddressDeny=any \
+  --property=IPAddressAllow=127.0.0.0/8 \
+  --property=IPAddressAllow=::1 \
+  -- <command>
+```
+
+Host loopback stays shared so OpenCode can reach `127.0.0.1:8080` / `8890`.
+This is process-scoped and does **not** install a long-running systemd service,
+login item, or auto-restart unit. Details:
+[config/firewall/linux/README.md](../config/firewall/linux/README.md).
 
 ## Operator expectations
 
-1. Re-run `make check` after every macOS upgrade before trusting the workbench.
-2. If the probe fails, stop using the workbench until a replacement boundary is
-   reviewed and landed.
+1. Re-run `make check` after OS upgrades before trusting the workbench.
+2. If the probe fails, stop using the workbench until the platform backend is
+   repaired.
 3. Keep application policy (OpenCode permissions, loopback binds, PID stop
-   validation) even when the OS sandbox is healthy; it is defense in depth, not
-   a substitute.
-
-## Replacement options (reviewed later)
-
-When Apple removes or weakens `sandbox-exec`, choose one explicit replacement
-before continuing normal use:
-
-| Option | Fit | Notes |
-|---|---|---|
-| Successor Seatbelt / App Sandbox tooling | Best continuity | Prefer if Apple documents a supported CLI equivalent |
-| Process-scoped Packet Filter anchors | Strong network deny | Not process-aware by itself; pair with launch wrappers and audits |
-| Network Extension / content filter | Strongest OS control | Conflicts with the no-always-on requirement unless manually started |
-| Container / VM isolation | Strong filesystem+network | Out of current scope; would need a separate milestone |
-
-No replacement is active today. Do not install always-on network extensions or
-login items as a silent workaround.
+   validation) even when the OS jail is healthy.
 
 ## Proof commands
 
 ```sh
 make check
 make network-audit
-python3 tools/sandbox-probe.py --profile config/firewall/opencode.sb
-python3 tools/sandbox-probe.py --profile config/firewall/llama.sb
-python3 tools/sandbox-probe.py --profile config/firewall/documents.sb
+python3 tools/sandbox-probe.py --profile opencode
+python3 tools/sandbox-probe.py --profile llama
+python3 tools/sandbox-probe.py --profile documents
 ```

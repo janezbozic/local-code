@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 # Supervised single-user session start: ensure the model is healthy, optionally
 # start restricted search, then run the agent in the foreground. No login items

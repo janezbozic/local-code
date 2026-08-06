@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 set -eu
 
@@ -24,7 +24,8 @@ fi
 
 actual_start="$(ps -p "${pid}" -o lstart= | sed 's/^ *//')"
 actual_command="$(ps -p "${pid}" -o command=)"
-actual_cwd="$(/usr/sbin/lsof -a -p "${pid}" -d cwd -Fn 2>/dev/null | sed -n 's/^n//p')"
+actual_cwd="$("$(find_lsof)" -a -p "${pid}" -d cwd -Fn 2>/dev/null | sed -n 's/^n//p')"
+
 [[ "${actual_start}" == "${expected_start}" ]] || die "PID reuse detected; refusing to stop ${pid}"
 [[ "${actual_command}" == *"${expected_executable}"* ]] || die "recorded process executable does not match"
 [[ "${actual_cwd}" == "${expected_cwd}" ]] || die "recorded process working directory does not match"

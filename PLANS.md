@@ -22,18 +22,19 @@ Last updated: 2026-08-06
 | 4. Bounded agents | Implemented | Six roles have fail-closed permissions, one-level delegation, and one serialized llama slot. |
 | 5. Document workflows | Implemented | Pinned Docling/document libraries and representative PDF/DOCX/PPTX/XLSX import plus export/render verification are present. |
 | 6. Boundary proof | Implemented | Listener, PID ownership, model outbound sockets, sandbox behavior, normal shutdown, and stale-record checks are repeatable through `make network-audit` and lifecycle tests. |
+| 7. Linux platform support | Code-complete; host acceptance pending | Platform sandbox façade, Linux systemd-run IP filter backend, CUDA/CPU llama preflight, portable paths/telemetry, and Linux approval docs are present. Full Linux acceptance requires filled `OPENCODE_BINARY_SHA256_LINUX_*` pins and `benchmarks/*-linux.json` from a real Linux host ([benchmarks/LINUX_ACCEPTANCE.md](benchmarks/LINUX_ACCEPTANCE.md)). |
 
 ## Milestone 1 decisions
 
 - OpenCode V1 is selected and exact-pinned to npm package `opencode-ai@1.18.13`; upgrades remain manual. No custom VS Code extension is maintained by this repository.
 - The only configured provider is `local-llama`, using `http://127.0.0.1:8080/v1`. The accepted default is gpt-oss-20b MXFP4 with model ID `gpt-oss-20b` at 128K context. IBM Granite 4.1 8B remains a selectable accepted profile at 16K. Qwen2.5 Coder 7B and Qwen3.6 27B are pinned provisional profiles and remain unaccepted until they pass structured tool-call, memory, swap, and thermal gates on the target machine.
 - OpenCode state is isolated under `.runtime/opencode`; existing global credentials and plugins are not loaded.
-- `sandbox-exec` enforces non-loopback denial. Its deprecated status is an explicit risk, mitigated by mandatory behavioral probes on every firewall profile and the replacement path in `docs/SANDBOX.md`.
-- llama.cpp is built inside `.tools/llama.cpp` with Metal enabled. Models reside under gitignored `models/`.
-- The 8192-token baseline failed the tool-reliability gate: repository glob/read output forced repeated compactions, and the second compaction produced no summary. Accepted profiles therefore use 16384 context tokens, one parallel slot, and a 2048-token maximum response until a clean 32K profile benchmark is recorded. OpenCode V1 compaction is automatic, prunes old tool output, and reserves 2048 tokens.
-- `make up` / `make down` provide supervised session lifecycle without login items, launch agents, or automatic restart.
+- Network denial is enforced by a platform sandbox façade (`tools/sandbox/run.sh`): Seatbelt on macOS, `systemd-run --user` IP filters on Linux. Behavioral probes fail closed on both.
+- llama.cpp is built inside `.tools/llama.cpp` with Metal on macOS and CUDA (or explicit CPU) on Linux. Models reside under gitignored `models/`.
+- The 8192-token baseline failed the tool-reliability gate: repository glob/read output forced repeated compactions, and the second compaction produced no summary. Accepted profiles therefore use profile-specific contexts, one parallel slot, and a 2048-token maximum response. OpenCode V1 compaction is automatic, prunes old tool output, and reserves 2048 tokens.
+- `make up` / `make down` provide supervised session lifecycle without login items, launch agents, systemd services, or automatic restart.
 - OpenCode preview searches can re-include gitignored paths when the model supplies a positive glob and can accept model-selected result limits of 2000. A repository-owned ripgrep guard excludes toolchains, runtime state, models, originals, and outputs, and caps stdout at 250 rows so a single tool result cannot exceed the model context.
-- No RAG, browser automation, database, container runtime, reverse proxy, telemetry stack, or worker queue is included.
+- No RAG, browser automation, database, container runtime, reverse proxy, telemetry stack, or worker queue is included. Linux isolation uses process-scoped systemd-run IP filtering, not containers.
 
 ## Implemented milestone details
 
@@ -72,3 +73,12 @@ The audit covers fixed ports, listener owners, model external sockets, PID
 records, forbidden runtime configuration, and every sandbox profile. OpenCode,
 llama.cpp, and document conversion deny non-loopback networking; only explicitly
 started SearXNG and the fetch gateway cross the external boundary.
+
+### Milestone 7 — Linux
+
+`tools/sandbox/run.sh` selects Seatbelt on macOS or systemd-run IP filters on
+Linux. Model preflight accepts Metal on macOS and CUDA (or explicit CPU) on
+Linux. Document tools resolve LibreOffice and PDF preview helpers from PATH.
+OpenCode binary pins are OS/arch specific. Linux acceptance evidence is written
+to `benchmarks/*-linux.json` without overwriting macOS records. Reviewed Linux
+install commands live in `docs/MILESTONE_7_APPROVALS.md`.

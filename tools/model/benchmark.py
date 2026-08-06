@@ -51,6 +51,51 @@ def process_snapshot(pid: int) -> dict:
     }
 
 
+def swap_snapshot() -> str:
+    if sys.platform == "darwin":
+        return command("sysctl", "-n", "vm.swapusage").stdout.strip()
+    meminfo = pathlib.Path("/proc/meminfo")
+    if meminfo.is_file():
+        values = {}
+        for line in meminfo.read_text().splitlines():
+            if ":" in line:
+                key, value = line.split(":", 1)
+                values[key] = value.strip()
+        return f"SwapTotal={values.get('SwapTotal', '?')} SwapFree={values.get('SwapFree', '?')}"
+    return "swap:unavailable"
+
+
+def thermal_snapshot() -> str:
+    if sys.platform == "darwin":
+        return command("pmset", "-g", "therm").stdout.strip() or "thermal:unavailable"
+    zones = sorted(pathlib.Path("/sys/class/thermal").glob("thermal_zone*/temp"))
+    if not zones:
+        return "thermal:unavailable"
+    readings = []
+    for zone in zones[:4]:
+        try:
+            millideg = int(zone.read_text().strip())
+            readings.append(f"{zone.parent.name}={millideg / 1000:.1f}C")
+        except (OSError, ValueError):
+            continue
+    return " ".join(readings) if readings else "thermal:unavailable"
+
+
+def memory_snapshot() -> str:
+    if sys.platform == "darwin":
+        return command("memory_pressure", "-Q").stdout.strip()
+    meminfo = pathlib.Path("/proc/meminfo")
+    if meminfo.is_file():
+        keep = ("MemTotal", "MemAvailable", "MemFree", "SwapTotal", "SwapFree")
+        parts = []
+        for line in meminfo.read_text().splitlines():
+            key = line.split(":", 1)[0]
+            if key in keep:
+                parts.append(line.strip())
+        return "\n".join(parts)
+    return "memory:unavailable"
+
+
 def main() -> int:
     try:
         health, health_seconds = request("/health", timeout=5)
@@ -66,7 +111,7 @@ def main() -> int:
         return 2
     pid = pids[0]
     before = process_snapshot(pid)
-    swap_before = command("sysctl", "-n", "vm.swapusage").stdout.strip()
+    swap_before = swap_snapshot()
 
     model_ids = [str(item.get("id", "")) for item in models.get("data", [])]
     if any("gpt-oss" in item for item in model_ids):
@@ -120,9 +165,9 @@ def main() -> int:
     checks_seconds = time.monotonic() - checks_started
 
     after = process_snapshot(pid)
-    swap_after = command("sysctl", "-n", "vm.swapusage").stdout.strip()
-    thermal = command("pmset", "-g", "therm").stdout.strip()
-    memory_pressure = command("memory_pressure", "-Q").stdout.strip()
+    swap_after = swap_snapshot()
+    thermal = thermal_snapshot()
+    memory_pressure = memory_snapshot()
     props, _ = request("/props", timeout=5)
     context_tokens = props.get("default_generation_settings", {}).get("n_ctx")
 

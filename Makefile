@@ -1,4 +1,4 @@
-SHELL := /bin/zsh
+SHELL := $(shell command -v zsh)
 .DEFAULT_GOAL := help
 
 .PHONY: help check test benchmark benchmark-profiles benchmark-coder benchmark-gpt-oss benchmark-qwen36 \
@@ -14,8 +14,8 @@ help:
 	@echo "  make benchmark  # requires model server"
 	@echo "  make benchmark-profiles  # requires port 8080 to be free"
 	@echo "  make benchmark-coder  # provisional; structured tool-call gate currently failing"
-	@echo "  make benchmark-gpt-oss  # sequential 16K/32K acceptance"
-	@echo "  make benchmark-qwen36  # provisional sequential 8K/16K gate"
+	@echo "  make benchmark-gpt-oss  # profile acceptance gate"
+	@echo "  make benchmark-qwen36  # provisional sequential gate"
 	@echo "  make network-audit"
 	@echo "  make model-start [PROFILE=gpt-oss|granite|coder|qwen36] [BACKGROUND=1]"
 	@echo "  make model-stop"
@@ -73,14 +73,14 @@ search-stop:
 document-import:
 	@test -n "$(FILE)" || { echo "usage: make document-import FILE=/absolute/path/to/file" >&2; exit 2; }
 	@test -x ./.venv/documents/bin/python || { echo "error: document environment is not installed; see docs/DOCUMENTS.md" >&2; exit 2; }
-	@/usr/bin/sandbox-exec -f config/firewall/documents.sb ./.venv/documents/bin/python ./tools/documents/workflow.py import "$(FILE)"
+	@./tools/sandbox/run.sh --profile documents -- ./.venv/documents/bin/python ./tools/documents/workflow.py import "$(FILE)"
 
 document-export:
 	@test -n "$(FILE)" -a -n "$(FORMAT)" || { echo "usage: make document-export FILE=knowledge/markdown/file.md FORMAT=pdf" >&2; exit 2; }
 	@test -x ./.venv/documents/bin/python || { echo "error: document environment is not installed; see docs/DOCUMENTS.md" >&2; exit 2; }
-	@/usr/bin/sandbox-exec -f config/firewall/documents.sb ./.venv/documents/bin/python ./tools/documents/workflow.py export "$(FILE)" "$(FORMAT)"
+	@./tools/sandbox/run.sh --profile documents -- ./.venv/documents/bin/python ./tools/documents/workflow.py export "$(FILE)" "$(FORMAT)"
 
 document-render:
 	@test -n "$(FILE)" || { echo "usage: make document-render FILE=output/file.pdf" >&2; exit 2; }
 	@test -x ./.venv/documents/bin/python || { echo "error: document environment is not installed; see docs/DOCUMENTS.md" >&2; exit 2; }
-	@/usr/bin/sandbox-exec -f config/firewall/documents.sb ./.venv/documents/bin/python ./tools/documents/workflow.py render "$(FILE)"
+	@./tools/sandbox/run.sh --profile documents -- ./.venv/documents/bin/python ./tools/documents/workflow.py render "$(FILE)"

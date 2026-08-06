@@ -23,15 +23,53 @@ MARKDOWN = ROOT / "knowledge/markdown"
 MANIFESTS = ROOT / "knowledge/manifests"
 OUTPUT = ROOT / "output"
 NS = {"a": "http://schemas.openxmlformats.org/drawingml/2006/main", "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main", "s": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
-SOFFICE = pathlib.Path("/opt/homebrew/bin/soffice")
+
+
+def resolve_soffice() -> pathlib.Path:
+    for candidate in (
+        shutil.which("soffice"),
+        shutil.which("libreoffice"),
+        "/usr/bin/soffice",
+        "/usr/bin/libreoffice",
+        "/opt/homebrew/bin/soffice",
+        "/usr/local/bin/soffice",
+    ):
+        if not candidate:
+            continue
+        path = pathlib.Path(candidate)
+        if path.is_file():
+            return path
+    raise ValueError("LibreOffice is not installed; install soffice/libreoffice on PATH")
 
 
 def office_command(*args: str) -> list[str]:
-    if not SOFFICE.is_file():
-        raise ValueError("LibreOffice is not installed at /opt/homebrew/bin/soffice")
+    soffice = resolve_soffice()
     profile = ROOT / ".runtime/libreoffice"
     profile.mkdir(parents=True, exist_ok=True)
-    return [str(SOFFICE), f"-env:UserInstallation={profile.resolve().as_uri()}", "--headless", *args]
+    return [str(soffice), f"-env:UserInstallation={profile.resolve().as_uri()}", "--headless", *args]
+
+
+def render_preview(pdf: pathlib.Path, preview: pathlib.Path) -> str:
+    sips = pathlib.Path("/usr/bin/sips")
+    if sips.is_file():
+        proc = subprocess.run([str(sips), "-s", "format", "png", str(pdf), "--out", str(preview)], capture_output=True, text=True)
+        if proc.returncode == 0 and preview.exists() and preview.stat().st_size > 0:
+            return "LibreOffice+sips"
+        raise ValueError(f"render inspection failed: {proc.stderr or proc.stdout}")
+    pdftoppm = shutil.which("pdftoppm")
+    if pdftoppm:
+        stem = preview.with_suffix("")
+        proc = subprocess.run([pdftoppm, "-png", "-singlefile", "-f", "1", "-l", "1", str(pdf), str(stem)], capture_output=True, text=True)
+        if proc.returncode == 0 and preview.exists() and preview.stat().st_size > 0:
+            return "LibreOffice+pdftoppm"
+        raise ValueError(f"render inspection failed: {proc.stderr or proc.stdout}")
+    convert = shutil.which("convert")
+    if convert:
+        proc = subprocess.run([convert, f"{pdf}[0]", str(preview)], capture_output=True, text=True)
+        if proc.returncode == 0 and preview.exists() and preview.stat().st_size > 0:
+            return "LibreOffice+ImageMagick"
+        raise ValueError(f"render inspection failed: {proc.stderr or proc.stdout}")
+    raise ValueError("render inspection requires sips, pdftoppm (poppler), or ImageMagick convert")
 
 
 def sha256(path: pathlib.Path) -> str:
@@ -184,10 +222,8 @@ def render_document(source: pathlib.Path) -> None:
         if proc.returncode != 0 or not pdf.exists():
             raise ValueError(f"LibreOffice render failed: {proc.stderr or proc.stdout}")
     preview = render_dir / "preview.png"
-    proc = subprocess.run(["/usr/bin/sips", "-s", "format", "png", str(pdf), "--out", str(preview)], capture_output=True, text=True)
-    if proc.returncode != 0 or not preview.exists() or preview.stat().st_size == 0:
-        raise ValueError(f"render inspection failed: {proc.stderr or proc.stdout}")
-    record = manifest("render", source, [preview], "LibreOffice+sips", None)
+    converter = render_preview(pdf, preview)
+    record = manifest("render", source, [preview], converter, None)
     print(f"rendered: {preview.relative_to(ROOT)}; manifest: {record.relative_to(ROOT)}")
 
 

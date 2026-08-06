@@ -10,9 +10,15 @@ OpenCode configuration is necessary but not sufficient. The runtime wrapper ther
 2. a scrubbed environment containing no hosted-provider credentials;
 3. OpenCode disable flags and the isolated V1 `--pure --mini` interface with an explicit local model argument;
 4. a provider allowlist and explicit web/provider permission denials; and
-5. an OS-level `sandbox-exec` profile denying non-loopback networking.
+5. an OS-level network jail denying non-loopback networking (`sandbox-exec` on
+   macOS; `systemd-run --user` IP filters on Linux via `tools/sandbox/run.sh`).
 
-`sandbox-exec` is deprecated by Apple. This repository treats its availability and observed behavior as a startup prerequisite, not a permanent guarantee. `tools/sandbox-probe.py` verifies that loopback succeeds and an external IP is denied for every firewall profile during `make check`. Startup fails closed if that probe fails. See [docs/SANDBOX.md](../../docs/SANDBOX.md) for the replacement path. A future macOS release that removes or weakens this behavior blocks the workbench until a replacement boundary is reviewed.
+On macOS, `sandbox-exec` is deprecated by Apple and remains a behavioral
+prerequisite. On Linux, a working systemd user session is required. In both
+cases `tools/sandbox-probe.py` verifies that loopback succeeds and an external
+IP is denied for every logical profile during `make check`. Startup fails closed
+if that probe fails. See [docs/SANDBOX.md](../../docs/SANDBOX.md) and
+[linux/README.md](linux/README.md).
 
 The profiles intentionally focus on networking. OpenCode tool permissions enforce interactive file/command approvals, while the repository location and designated document directories provide the operational filesystem boundary.
 

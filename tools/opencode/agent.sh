@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 set -eu
 
@@ -17,8 +17,9 @@ opencode_bin="${OPENCODE_BIN:-${root}/.tools/opencode-v1/node_modules/.bin/openc
 rg_bin="${RG_BIN:-$(command -v rg 2>/dev/null || true)}"
 if [[ -z "${rg_bin}" || ! -x "${rg_bin}" ]]; then
   for candidate in \
-    /opt/homebrew/bin/rg \
-    /usr/local/bin/rg; do
+    /usr/bin/rg \
+    /usr/local/bin/rg \
+    /opt/homebrew/bin/rg; do
     if [[ -x "${candidate}" ]]; then
       rg_bin="${candidate}"
       break
@@ -26,8 +27,20 @@ if [[ -z "${rg_bin}" || ! -x "${rg_bin}" ]]; then
   done
 fi
 if [[ -z "${rg_bin}" || ! -x "${rg_bin}" ]]; then
+  os="$(os_id)"
+  arch="$(arch_id)"
+  case "${os}" in
+    darwin) rg_glob='*/openai.chatgpt-*/bin/macos-aarch64/rg' ;;
+    linux)
+      if [[ "${arch}" == arm64 ]]; then
+        rg_glob='*/openai.chatgpt-*/bin/linux-arm64/rg'
+      else
+        rg_glob='*/openai.chatgpt-*/bin/linux-x64/rg'
+      fi
+      ;;
+  esac
   rg_bin="$(/usr/bin/find "${HOME}/.vscode/extensions" \
-    -path '*/openai.chatgpt-*/bin/macos-aarch64/rg' \
+    -path "${rg_glob}" \
     -type f -perm -111 -print -quit 2>/dev/null || true)"
 fi
 if [[ -n "${rg_bin}" ]]; then
@@ -74,16 +87,17 @@ for argument in "$@"; do
   esac
 done
 
+zsh_path="$(command -v zsh)"
 cd "${root}"
-exec /usr/bin/sandbox-exec -f "${root}/config/firewall/opencode.sb" \
+exec "${root}/tools/sandbox/run.sh" --profile opencode -- \
   /usr/bin/env -i \
   HOME="${HOME}" \
   USER="${USER:-local-user}" \
   LOGNAME="${LOGNAME:-${USER:-local-user}}" \
-  SHELL="/bin/zsh" \
+  SHELL="${zsh_path}" \
   TERM="${TERM:-xterm-256color}" \
   LANG="${LANG:-en_US.UTF-8}" \
-  PATH="${root}/.runtime/opencode/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" \
+  PATH="${root}/.runtime/opencode/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin" \
   TMPDIR="${root}/.runtime/tmp" \
   XDG_CONFIG_HOME="${root}/.runtime/opencode/config" \
   XDG_DATA_HOME="${root}/.runtime/opencode/data" \

@@ -144,8 +144,18 @@ def main() -> int:
         fail("make check must shellcheck tools/web scripts")
     if "tools/workbench/*.sh" not in check_script:
         fail("make check must shellcheck tools/workbench scripts")
+    if "tools/sandbox/*.sh" not in check_script:
+        fail("make check must shellcheck tools/sandbox scripts")
     if "sandbox-probe.py --profile" not in check_script:
         fail("make check must behaviorally probe every sandbox profile")
+    if "tools/sandbox/run.sh" not in (ROOT / "tools/model/start.sh").read_text(encoding="utf-8"):
+        fail("model start must use the sandbox runner façade")
+    if "tools/sandbox/run.sh" not in (ROOT / "tools/opencode/agent.sh").read_text(encoding="utf-8"):
+        fail("OpenCode agent must use the sandbox runner façade")
+    if not (ROOT / "docs/MILESTONE_7_APPROVALS.md").is_file():
+        fail("Linux Milestone 7 approval document is missing")
+    if not (ROOT / "config/firewall/linux/README.md").is_file():
+        fail("Linux firewall backend documentation is missing")
 
     versions = parse_env(ROOT / "config/versions.env")
     if versions.get("OPENCODE_CHANNEL") != "stable":
@@ -178,8 +188,11 @@ def main() -> int:
     installed_binary = ROOT / ".tools/opencode-v1/node_modules/.bin/opencode"
     if installed_binary.exists():
         actual_binary_sha = hashlib.sha256(installed_binary.read_bytes()).hexdigest()
-        if actual_binary_sha != versions.get("OPENCODE_BINARY_SHA256"):
-            fail("installed OpenCode binary SHA-256 does not match the pin")
+        expected = versions.get("OPENCODE_BINARY_SHA256_DARWIN_ARM64") or versions.get("OPENCODE_BINARY_SHA256")
+        if actual_binary_sha != expected:
+            fail("installed OpenCode binary SHA-256 does not match the darwin-arm64 pin")
+    if not re.fullmatch(r"[0-9a-f]{64}", versions.get("OPENCODE_BINARY_SHA256_DARWIN_ARM64", "")):
+        fail("darwin-arm64 OpenCode binary pin is missing")
 
     wrapper = (ROOT / "tools/opencode/agent.sh").read_text(encoding="utf-8")
     required_flags = {
@@ -208,9 +221,10 @@ def main() -> int:
     if not vscode_shim.exists() or "../agent.sh" not in vscode_shim.read_text(encoding="utf-8"):
         fail("VS Code terminal shim is missing")
     vscode_settings = json.loads((ROOT / ".vscode/settings.json").read_text(encoding="utf-8"))
-    terminal_path = vscode_settings.get("terminal.integrated.env.osx", {}).get("PATH", "")
-    if not terminal_path.startswith("${workspaceFolder}/tools/opencode/bin:"):
-        fail("VS Code terminals do not prefer the strict OpenCode shim")
+    for key in ("terminal.integrated.env.osx", "terminal.integrated.env.linux"):
+        terminal_path = vscode_settings.get(key, {}).get("PATH", "")
+        if not terminal_path.startswith("${workspaceFolder}/tools/opencode/bin:"):
+            fail(f"VS Code terminals do not prefer the strict OpenCode shim ({key})")
 
     for profile, expected in {
         "coder": ("qwen2.5-coder-7b", versions.get("CODER_MODEL_SHA256")),

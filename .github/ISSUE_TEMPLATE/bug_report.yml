@@ -25,7 +25,7 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: macOS version, Apple Silicon model, memory, and selected model profile. Omit usernames and private paths.
+      description: OS version, hardware, memory/VRAM, and selected model profile. Omit usernames and private paths.
     validations:
       required: true
   - type: textarea

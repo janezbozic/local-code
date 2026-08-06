@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 # Supervised shutdown for the single-user workbench. Stops recorded search and
 # model services when present; never creates or removes login items.

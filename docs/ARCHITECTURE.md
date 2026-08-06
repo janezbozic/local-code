@@ -116,8 +116,8 @@ OpenCode UI extensions, which are outside this repository's security boundary.
 
 ## Trust boundaries and limitations
 
-- `sandbox-exec` is deprecated and must be behaviorally revalidated on each
-  supported macOS release. See [SANDBOX.md](SANDBOX.md).
+- `sandbox-exec` (macOS) or `systemd-run --user` IP filters (Linux) must be
+  behaviorally revalidated on each supported OS release. See [SANDBOX.md](SANDBOX.md).
 - Local models can produce unsafe or incorrect commands; permission prompts and
   review remain required.
 - SearXNG and the gateway intentionally cross the network only when manually

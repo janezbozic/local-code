@@ -47,7 +47,7 @@ case "${os}" in
     exec /usr/bin/sandbox-exec -f "${seatbelt}" "$@"
     ;;
   linux)
-    require_command systemd-run
+    require_linux_user_systemd
     exec systemd-run --user --collect --quiet \
       --working-directory="${root}" \
       --property=IPAddressDeny=any \

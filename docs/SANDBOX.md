@@ -36,6 +36,15 @@ This is process-scoped and does **not** install a long-running systemd service,
 login item, or auto-restart unit. Details:
 [config/firewall/linux/README.md](../config/firewall/linux/README.md).
 
+## WSL2 (Milestone 8)
+
+WSL2 guests report as Linux and use the same systemd-run IP filter backend.
+Native Windows is unsupported. Requirements: WSL2 (not WSL1), systemd enabled
+in `/etc/wsl.conf`, and a working `systemd-run --user` session. Probe output
+labels the backend `systemd-run-ipfilter/wsl`. See
+[MILESTONE_8_APPROVALS.md](MILESTONE_8_APPROVALS.md) and
+[WSL2_ACCEPTANCE.md](../benchmarks/WSL2_ACCEPTANCE.md).
+
 ## Operator expectations
 
 1. Re-run `make check` after OS upgrades before trusting the workbench.

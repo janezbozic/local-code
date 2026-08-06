@@ -28,3 +28,10 @@ use the same IP filter properties; the names exist so call sites and audits stay
 aligned with macOS.
 
 Search (SearXNG + gateway) stays outside this jail, matching macOS.
+
+## WSL2
+
+WSL2 guests use this same backend. Enable systemd in `/etc/wsl.conf`, keep the
+repository off `/mnt/c`, and follow
+[docs/MILESTONE_8_APPROVALS.md](../../../docs/MILESTONE_8_APPROVALS.md). Native
+Windows is unsupported.

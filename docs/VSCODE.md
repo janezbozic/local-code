@@ -18,3 +18,8 @@ make up
 make model-start PROFILE=gpt-oss
 MODEL_PROFILE=gpt-oss tools/opencode/bin/opencode
 ```
+
+On Windows, use the [WSL](https://code.visualstudio.com/docs/remote/wsl) remote
+extension and open the repository inside the Linux guest (not a `/mnt/c` path).
+Native Windows terminals are unsupported; see
+[MILESTONE_8_APPROVALS.md](MILESTONE_8_APPROVALS.md).

@@ -14,6 +14,19 @@ make network-audit
 Relevant logs and PID records are under `.runtime/logs` and `.runtime/pids`.
 Runtime data is intentionally ignored by Git.
 
+## WSL2: systemd --user fails
+
+Symptoms include `WSL2 sandbox requires a working systemd --user session` from
+`make check`, `tools/sandbox/run.sh`, or `tools/sandbox-probe.py`.
+
+1. Confirm the distro is WSL2 (`wsl.exe -l -v` from Windows).
+2. Enable systemd in `/etc/wsl.conf` (`[boot] systemd=true`).
+3. From Windows: `wsl --shutdown`, reopen the distro.
+4. Verify: `systemd-run --user --collect --quiet -- /bin/true`.
+
+Keep the repository off `/mnt/c`. Prefer `LLAMA_GPU_BACKEND=cpu` for first
+bring-up. Details: [MILESTONE_8_APPROVALS.md](MILESTONE_8_APPROVALS.md).
+
 ## OpenCode binary or checksum mismatch
 
 Symptoms include `OpenCode V1 is not installed`, a version mismatch, or a

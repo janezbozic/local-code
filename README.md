@@ -1,10 +1,10 @@
 # Local Code
 
 Local Code is a privacy-first agent workbench for Apple Silicon Macs, with
-Linux x86_64 scaffolding in-tree (acceptance pending host evidence). It runs
-OpenCode V1 against local `llama.cpp` inference, places every normal runtime
-behind a loopback-only network boundary, and adds optional restricted web
-research and preserving document workflows.
+Linux x86_64 and Windows WSL2 scaffolding in-tree (acceptance pending host
+evidence). It runs OpenCode V1 against local `llama.cpp` inference, places
+every normal runtime behind a loopback-only network boundary, and adds optional
+restricted web research and preserving document workflows.
 
 The repository is designed for deliberate, manual operation: no hosted model
 provider, automatic startup, background updater, telemetry service, or implicit
@@ -33,16 +33,18 @@ download is part of the normal workflow.
 |---|---|---|
 | macOS / Apple Silicon | **Supported** | Proven path: Seatbelt, Metal, gpt-oss 128K evidence in `benchmarks/`. |
 | Linux x86_64 | **Code-complete; acceptance pending** | Sandbox façade, CUDA/CPU preflight, and docs are in-tree. Do not advertise full Linux support until `OPENCODE_BINARY_SHA256_LINUX_X64` is filled and `benchmarks/*-linux.json` is recorded on a real host ([benchmarks/LINUX_ACCEPTANCE.md](benchmarks/LINUX_ACCEPTANCE.md)). |
-| Windows | Not supported | Follow-up; WSL2 may reuse the Linux path later. |
+| Windows via WSL2 | **Code-complete; acceptance pending** | Reuses the Linux path with systemd required. Native Windows is unsupported. See [docs/MILESTONE_8_APPROVALS.md](docs/MILESTONE_8_APPROVALS.md) and [benchmarks/WSL2_ACCEPTANCE.md](benchmarks/WSL2_ACCEPTANCE.md). |
+| Native Windows | Not supported | No cmd/PowerShell/Git Bash runtime. |
 
 Startup tests the active sandbox backend and fails closed if loopback access or
 non-loopback denial does not behave as expected.
 
-This repository is publishable as a **macOS-first** local workbench. Linux
-scaffolding is ready for bring-up; production Linux claims wait on host
-evidence. Provisional profiles (`coder`, Qwen3.6) remain unaccepted on every OS.
+This repository is publishable as a **macOS-first** local workbench. Linux and
+WSL2 scaffolding are ready for bring-up; production claims for those platforms
+wait on host evidence. Provisional profiles (`coder`, Qwen3.6) remain
+unaccepted on every OS.
 
-All seven milestones in [PLANS.md](PLANS.md) are implemented. Recorded macOS
+All eight milestones in [PLANS.md](PLANS.md) are implemented. Recorded macOS
 benchmark results are available in [benchmarks](benchmarks/README.md).
 
 ## Quick start

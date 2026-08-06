@@ -13,4 +13,7 @@ This repository is a privacy-first, fully local agent workbench.
 - Prefer foreground processes. Validate recorded PID identity before stopping any background process.
 - Do not add automatic startup, login items, launch agents, scheduled tasks, hosted telemetry, or session sharing.
 
-`PLANS.md` is the execution source of truth. All six planned milestones are implemented and remain subject to the documented acceptance gates.
+`PLANS.md` is the execution source of truth. Planned milestones are implemented
+and remain subject to the documented acceptance gates. Supported publish claims
+follow the platform table in `README.md` (macOS-first; Linux/WSL2 pending host
+evidence).

@@ -19,6 +19,8 @@
 - [Linux approvals](MILESTONE_7_APPROVALS.md): reviewed Linux build commands;
   acceptance pending host evidence
   ([LINUX_ACCEPTANCE.md](../benchmarks/LINUX_ACCEPTANCE.md)).
+- [WSL2 approvals](MILESTONE_8_APPROVALS.md): Windows via WSL2 (Linux path);
+  acceptance pending ([WSL2_ACCEPTANCE.md](../benchmarks/WSL2_ACCEPTANCE.md)).
 - [Bounded agents](../agents/README.md): roles, permissions, and delegation.
 - [Execution plan](../PLANS.md): implemented milestones and design decisions.
 - [Security policy](../SECURITY.md): supported scope and vulnerability reports.
@@ -35,6 +37,7 @@
 - [Core runtime approvals](MILESTONE_2_APPROVALS.md)
 - [Restricted-search approvals](MILESTONE_3_APPROVALS.md)
 - [Linux platform approvals](MILESTONE_7_APPROVALS.md)
+- [WSL2 platform approvals](MILESTONE_8_APPROVALS.md)
 
 These approval records preserve exact versions, revisions, hashes, and commands.
 They are intentionally separate from normal operation because the workbench

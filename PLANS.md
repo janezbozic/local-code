@@ -23,6 +23,7 @@ Last updated: 2026-08-06
 | 5. Document workflows | Implemented | Pinned Docling/document libraries and representative PDF/DOCX/PPTX/XLSX import plus export/render verification are present. |
 | 6. Boundary proof | Implemented | Listener, PID ownership, model outbound sockets, sandbox behavior, normal shutdown, and stale-record checks are repeatable through `make network-audit` and lifecycle tests. |
 | 7. Linux platform support | Code-complete; host acceptance pending | Platform sandbox façade, Linux systemd-run IP filter backend, CUDA/CPU llama preflight, portable paths/telemetry, and Linux approval docs are present. Full Linux acceptance requires filled `OPENCODE_BINARY_SHA256_LINUX_*` pins and `benchmarks/*-linux.json` from a real Linux host ([benchmarks/LINUX_ACCEPTANCE.md](benchmarks/LINUX_ACCEPTANCE.md)). |
+| 8. Windows via WSL2 | Code-complete; host acceptance pending | WSL2 reuses the Linux sandbox path with detection helpers, fail-closed systemd messaging, path warnings, and WSL approval docs. Native Windows remains unsupported. Full WSL acceptance requires the Linux pins plus [benchmarks/WSL2_ACCEPTANCE.md](benchmarks/WSL2_ACCEPTANCE.md). |
 
 ## Milestone 1 decisions
 
@@ -82,3 +83,13 @@ Linux. Document tools resolve LibreOffice and PDF preview helpers from PATH.
 OpenCode binary pins are OS/arch specific. Linux acceptance evidence is written
 to `benchmarks/*-linux.json` without overwriting macOS records. Reviewed Linux
 install commands live in `docs/MILESTONE_7_APPROVALS.md`.
+
+### Milestone 8 — Windows via WSL2
+
+Native Windows shells are unsupported. WSL2 guests report as Linux and reuse
+Milestone 7 isolation, pins, and build recipes. Helpers detect WSL, require a
+working `systemd --user` session (with WSL-specific enablement guidance), and
+warn when the repository lives under `/mnt/...`. First bring-up prefers
+`LLAMA_GPU_BACKEND=cpu`. Reviewed WSL notes live in
+`docs/MILESTONE_8_APPROVALS.md`; acceptance is
+[benchmarks/WSL2_ACCEPTANCE.md](benchmarks/WSL2_ACCEPTANCE.md).

@@ -48,6 +48,37 @@ arch_id() {
   esac
 }
 
+# WSL2 guests report uname Linux and reuse the Linux sandbox path.
+is_wsl() {
+  [[ "$(uname -s)" == Linux ]] || return 1
+  if [[ -e /proc/sys/fs/binfmt_misc/WSLInterop || -e /proc/sys/fs/binfmt_misc/WSLInterop.conf ]]; then
+    return 0
+  fi
+  [[ -r /proc/version ]] || return 1
+  grep -qiE 'microsoft|wsl' /proc/version
+}
+
+require_linux_user_systemd() {
+  require_command systemd-run
+  if systemd-run --user --collect --quiet -- /bin/true >/dev/null 2>&1; then
+    return 0
+  fi
+  if is_wsl; then
+    die "WSL2 sandbox requires a working systemd --user session. Enable systemd in /etc/wsl.conf ([boot] systemd=true), run wsl --shutdown from Windows, reopen the distro, then retry. See docs/MILESTONE_8_APPROVALS.md"
+  fi
+  die "Linux sandbox requires a working systemd --user session (systemd-run --user failed)"
+}
+
+warn_wsl_repo_path() {
+  local root="$1"
+  is_wsl || return 0
+  case "${root}" in
+    /mnt/*)
+      print -u2 -- "warning: repository is on a Windows drive mount (${root}). Prefer a Linux filesystem path such as ~/projects/local-code for permissions and performance. See docs/MILESTONE_8_APPROVALS.md"
+      ;;
+  esac
+}
+
 find_lsof() {
   if [[ -x /usr/bin/lsof ]]; then
     print -r -- /usr/bin/lsof

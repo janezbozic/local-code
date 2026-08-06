@@ -116,8 +116,9 @@ OpenCode UI extensions, which are outside this repository's security boundary.
 
 ## Trust boundaries and limitations
 
-- `sandbox-exec` (macOS) or `systemd-run --user` IP filters (Linux) must be
-  behaviorally revalidated on each supported OS release. See [SANDBOX.md](SANDBOX.md).
+- `sandbox-exec` (macOS) or `systemd-run --user` IP filters (Linux and WSL2)
+  must be behaviorally revalidated on each supported OS release. See
+  [SANDBOX.md](SANDBOX.md). Native Windows is unsupported.
 - Local models can produce unsafe or incorrect commands; permission prompts and
   review remain required.
 - SearXNG and the gateway intentionally cross the network only when manually

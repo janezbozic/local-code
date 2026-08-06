@@ -3,9 +3,10 @@
 ## Supported environment
 
 **macOS on Apple Silicon is the supported, proven publish path.** Linux x86_64
-is code-complete (Milestone 7) but not fully accepted until Linux binary pins
-and `benchmarks/*-linux.json` evidence exist—see
-[../benchmarks/LINUX_ACCEPTANCE.md](../benchmarks/LINUX_ACCEPTANCE.md).
+and Windows via WSL2 are code-complete (Milestones 7–8) but not fully accepted
+until Linux binary pins and `benchmarks/*-linux.json` evidence exist—see
+[../benchmarks/LINUX_ACCEPTANCE.md](../benchmarks/LINUX_ACCEPTANCE.md) and
+[../benchmarks/WSL2_ACCEPTANCE.md](../benchmarks/WSL2_ACCEPTANCE.md).
 
 The repository targets:
 
@@ -14,17 +15,20 @@ The repository targets:
 - Linux x86_64 with a systemd user session, `systemd-run --user` IP filtering,
   and CUDA-enabled llama.cpp (CPU bring-up allowed explicitly; acceptance
   pending host evidence);
-- approximately 24 GB of memory for the recorded macOS profiles (Linux VRAM/RAM
-  needs depend on the selected model and context);
+- Windows via WSL2 as a Linux guest with systemd enabled (same sandbox path;
+  prefer `LLAMA_GPU_BACKEND=cpu` for first bring-up; acceptance pending);
+- approximately 24 GB of memory for the recorded macOS profiles (Linux/WSL
+  VRAM/RAM needs depend on the selected model and context);
 - Zsh (`#!/usr/bin/env zsh`), Make, Git, Python 3, Node.js/npm, CMake, `jq`,
   `shellcheck`, `curl`, `lsof`, and platform sandbox tooling
-  (`sandbox-exec` on macOS; `systemd-run` on Linux);
+  (`sandbox-exec` on macOS; `systemd-run` on Linux/WSL2);
 - sufficient disk space for local builds, wheel caches, and models. The gpt-oss
   default is about 12.11 GB, Granite about 5.35 GB, Qwen2.5 Coder about 4.68 GB,
   and the provisional Qwen3.6 Q4_K_M file about 19.10 GB before runtime caches.
 
-Windows is not supported. Do not claim production Linux support in releases
-until the Linux acceptance checklist has been completed and committed.
+Native Windows (cmd, PowerShell, Git Bash) is not supported. Do not claim
+production Linux or WSL support in releases until the matching acceptance
+checklist has been completed and committed.
 
 ## Installation principles
 
@@ -55,12 +59,15 @@ Install the packages listed for your OS:
   `/usr/bin/sandbox-exec`, `lsof`, `zsh`, and Metal-capable tooling are present.
 - Linux: see [MILESTONE_7_APPROVALS.md](MILESTONE_7_APPROVALS.md) for package and
   CUDA/CPU build commands.
+- Windows via WSL2: enable systemd, then follow Milestone 7 inside the guest.
+  See [MILESTONE_8_APPROVALS.md](MILESTONE_8_APPROVALS.md).
 
 ## 3. Reviewed component installs
 
 - Core macOS/runtime pins: [MILESTONE_2_APPROVALS.md](MILESTONE_2_APPROVALS.md)
 - Restricted search: [MILESTONE_3_APPROVALS.md](MILESTONE_3_APPROVALS.md)
 - Linux builds and binary pins: [MILESTONE_7_APPROVALS.md](MILESTONE_7_APPROVALS.md)
+- WSL2 notes (reuses Linux pins): [MILESTONE_8_APPROVALS.md](MILESTONE_8_APPROVALS.md)
 
 ## 4. First-run verification
 

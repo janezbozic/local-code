@@ -4,7 +4,9 @@
 the proven platform. Complete
 [../benchmarks/LINUX_ACCEPTANCE.md](../benchmarks/LINUX_ACCEPTANCE.md) on a real
 Linux host (fill `OPENCODE_BINARY_SHA256_LINUX_*` and record
-`benchmarks/*-linux.json`) before advertising production Linux support.
+`benchmarks/*-linux.json`) before advertising production Linux support. WSL2
+guests follow the same Linux recipes plus
+[MILESTONE_8_APPROVALS.md](MILESTONE_8_APPROVALS.md).
 
 These commands contact GitHub, npm, or Hugging Face and must be reviewed and
 approved before use. They write only under this project except for system

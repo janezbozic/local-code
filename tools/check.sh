@@ -13,9 +13,10 @@ require_command shellcheck
 require_command zsh
 
 os="$(os_id)"
+warn_wsl_repo_path "${root}"
 case "${os}" in
   darwin) require_command sandbox-exec ;;
-  linux) require_command systemd-run ;;
+  linux) require_linux_user_systemd ;;
 esac
 
 jq empty opencode.json

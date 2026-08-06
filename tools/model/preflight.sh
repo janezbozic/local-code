@@ -29,9 +29,13 @@ case "${os}" in
       print -- "Linux llama.cpp CPU backend selected via LLAMA_GPU_BACKEND=cpu"
     else
       grep -Eq '^GGML_CUDA:BOOL=ON$' "${root}/${LLAMA_BUILD_CACHE}" || die "llama.cpp build is not verified as CUDA-enabled; set LLAMA_GPU_BACKEND=cpu for CPU-only bring-up"
+      if is_wsl; then
+        print -- "WSL2 CUDA path selected; requires NVIDIA Windows drivers plus a Linux CUDA toolkit. Prefer LLAMA_GPU_BACKEND=cpu for first bring-up. See docs/MILESTONE_8_APPROVALS.md"
+      fi
     fi
     ;;
 esac
+warn_wsl_repo_path "${root}"
 
 [[ -f "${root}/${LLAMA_MODEL}" ]] || die "model is not installed at ${LLAMA_MODEL}; review docs/MILESTONE_2_APPROVALS.md"
 

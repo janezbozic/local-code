@@ -26,5 +26,6 @@ private paths or prompt content before committing them.
 Linux hosts write sibling files with a `-linux` suffix (for example
 `profiles-gpt-oss-linux.json`) so macOS evidence is preserved. Until those
 files exist and Linux OpenCode binary pins are filled, treat the project as
-**macOS-first**—see [LINUX_ACCEPTANCE.md](LINUX_ACCEPTANCE.md). Record Linux
-artifacts only after `make check` and `make test` pass on the Linux machine.
+**macOS-first**—see [LINUX_ACCEPTANCE.md](LINUX_ACCEPTANCE.md) and
+[WSL2_ACCEPTANCE.md](WSL2_ACCEPTANCE.md). Record Linux/WSL artifacts only after
+`make check` and `make test` pass on that machine.

@@ -154,8 +154,20 @@ def main() -> int:
         fail("OpenCode agent must use the sandbox runner façade")
     if not (ROOT / "docs/MILESTONE_7_APPROVALS.md").is_file():
         fail("Linux Milestone 7 approval document is missing")
+    if not (ROOT / "docs/MILESTONE_8_APPROVALS.md").is_file():
+        fail("WSL2 Milestone 8 approval document is missing")
+    if not (ROOT / "benchmarks/WSL2_ACCEPTANCE.md").is_file():
+        fail("WSL2 acceptance checklist is missing")
     if not (ROOT / "config/firewall/linux/README.md").is_file():
         fail("Linux firewall backend documentation is missing")
+    common = (ROOT / "tools/common.sh").read_text(encoding="utf-8")
+    for helper in ("is_wsl()", "require_linux_user_systemd()", "warn_wsl_repo_path()"):
+        if helper not in common:
+            fail(f"common.sh must define {helper} for WSL2/Linux sandbox gates")
+    if "require_linux_user_systemd" not in (ROOT / "tools/sandbox/run.sh").read_text(encoding="utf-8"):
+        fail("sandbox runner must require a working systemd --user session on Linux")
+    if "is_wsl" not in (ROOT / "tools/sandbox-probe.py").read_text(encoding="utf-8"):
+        fail("sandbox probe must detect WSL for clearer systemd failures")
 
     versions = parse_env(ROOT / "config/versions.env")
     if versions.get("OPENCODE_CHANNEL") != "stable":

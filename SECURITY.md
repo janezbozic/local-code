@@ -4,12 +4,13 @@
 
 The current main branch and the exact versions in `config/versions.env` are the
 only supported configuration. **macOS on Apple Silicon is the supported publish
-path.** Linux x86_64 scaffolding is in-tree but not fully accepted until Linux
-binary pins and `benchmarks/*-linux.json` evidence are recorded (see
-[benchmarks/LINUX_ACCEPTANCE.md](benchmarks/LINUX_ACCEPTANCE.md)). Modified
+path.** Linux x86_64 and Windows via WSL2 scaffolding are in-tree but not fully
+accepted until Linux binary pins and `benchmarks/*-linux.json` evidence are
+recorded (see [benchmarks/LINUX_ACCEPTANCE.md](benchmarks/LINUX_ACCEPTANCE.md)
+and [benchmarks/WSL2_ACCEPTANCE.md](benchmarks/WSL2_ACCEPTANCE.md)). Modified
 sandbox backends, hosted providers, additional network bindings, parallel
-inference, third-party extensions, unpinned upgrades, and Windows are outside
-the supported security boundary.
+inference, third-party extensions, unpinned upgrades, and native Windows
+(cmd/PowerShell/Git Bash) are outside the supported security boundary.
 
 ## Reporting a vulnerability
 
@@ -25,7 +26,7 @@ private data.
 Include:
 
 - affected commit and component;
-- OS and hardware version (macOS or Linux);
+- OS and hardware version (macOS, Linux, or Windows+WSL2 distro);
 - expected and observed boundary behavior;
 - minimal reproduction steps;
 - whether non-loopback traffic, credential exposure, unsafe overwrite, or PID

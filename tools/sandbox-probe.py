@@ -52,6 +52,22 @@ def curl(profile: str, url: str) -> subprocess.CompletedProcess[str]:
     )
 
 
+def is_wsl() -> bool:
+    if platform.system() != "Linux":
+        return False
+    for marker in (
+        pathlib.Path("/proc/sys/fs/binfmt_misc/WSLInterop"),
+        pathlib.Path("/proc/sys/fs/binfmt_misc/WSLInterop.conf"),
+    ):
+        if marker.exists():
+            return True
+    version = pathlib.Path("/proc/version")
+    if version.is_file():
+        text = version.read_text(encoding="utf-8", errors="ignore").lower()
+        return "microsoft" in text or "wsl" in text
+    return False
+
+
 def ensure_linux_prereqs() -> None:
     if platform.system() != "Linux":
         return
@@ -65,9 +81,17 @@ def ensure_linux_prereqs() -> None:
         check=False,
     )
     if probe.returncode != 0:
+        detail = probe.stderr.strip() or probe.stdout.strip()
+        if is_wsl():
+            raise SystemExit(
+                "WSL2 sandbox requires a working systemd --user session. "
+                "Enable systemd in /etc/wsl.conf ([boot] systemd=true), run "
+                "wsl --shutdown from Windows, reopen the distro, then retry. "
+                f"See docs/MILESTONE_8_APPROVALS.md ({detail})"
+            )
         raise SystemExit(
             "Linux sandbox requires a working systemd --user session "
-            f"(systemd-run --user failed: {probe.stderr.strip() or probe.stdout.strip()})"
+            f"(systemd-run --user failed: {detail})"
         )
 
 
@@ -104,7 +128,12 @@ def main() -> int:
     if external.returncode == 0:
         raise SystemExit("sandbox unexpectedly allowed non-loopback networking")
 
-    backend = "seatbelt" if platform.system() == "Darwin" else "systemd-run-ipfilter"
+    if platform.system() == "Darwin":
+        backend = "seatbelt"
+    elif is_wsl():
+        backend = "systemd-run-ipfilter/wsl"
+    else:
+        backend = "systemd-run-ipfilter"
     print(f"sandbox probe passed ({backend}/{profile}): loopback allowed, non-loopback denied")
     return 0
 

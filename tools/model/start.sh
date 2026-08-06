@@ -54,5 +54,5 @@ PY
 fi
 
 print -- "Starting llama-server in the foreground on ${LLAMA_HOST}:${LLAMA_PORT}; stop with Ctrl-C."
-print -- "Model profile: ${MODEL_PROFILE:-granite} (${LLAMA_MODEL_ID}, context ${LLAMA_CONTEXT})."
+print -- "Model profile: ${MODEL_PROFILE:-gpt-oss} (${LLAMA_MODEL_ID}, context ${LLAMA_CONTEXT})."
 exec /usr/bin/sandbox-exec -f "${profile}" "${server}" "${args[@]}"

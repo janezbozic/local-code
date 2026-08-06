@@ -13,6 +13,8 @@ OpenCode V1 remains available through the terminal. Start the matching model,
 then launch the strict wrapper:
 
 ```sh
+make up
+# or
 make model-start PROFILE=gpt-oss
 MODEL_PROFILE=gpt-oss tools/opencode/bin/opencode
 ```

@@ -5,12 +5,13 @@ set -eu
 script_dir="${0:A:h}"
 source "${script_dir}/../common.sh"
 root="$(repo_root)"
-profile="${MODEL_PROFILE:-granite}"
+profile="${MODEL_PROFILE:-gpt-oss}"
 case "${profile}" in
+  coder) model_id="qwen2.5-coder-7b" ;;
   granite) model_id="granite-4.1-8b" ;;
   gpt-oss) model_id="gpt-oss-20b" ;;
   qwen36) model_id="qwen3.6-27b" ;;
-  *) die "unknown MODEL_PROFILE '${profile}'; choose granite, gpt-oss, or qwen36" ;;
+  *) die "unknown MODEL_PROFILE '${profile}'; choose coder, granite, gpt-oss, or qwen36" ;;
 esac
 opencode_bin="${OPENCODE_BIN:-${root}/.tools/opencode-v1/node_modules/.bin/opencode}"
 rg_bin="${RG_BIN:-$(command -v rg 2>/dev/null || true)}"

@@ -1,62 +1,37 @@
 {
   "schema_version": 1,
-  "recorded_at": "2026-08-05T18:26:31.075096+00:00",
+  "recorded_at": "2026-08-06T08:19:02.861189+00:00",
   "sequential": true,
   "parallel_slots": 1,
   "profile": "gpt-oss",
   "model": "gpt-oss-20b-mxfp4.gguf",
   "profiles": [
     {
-      "context_tokens": 8192,
-      "reported_context_tokens": 8192,
-      "cold_load_seconds": 1.2427929579862393,
+      "context_tokens": 131072,
+      "reported_context_tokens": 131072,
+      "cold_load_seconds": 16.328720290999996,
       "generation": {
-        "seconds": 3.053639165998902,
+        "seconds": 3.0811461659999964,
         "actual": "PROFILE_OK",
         "prompt_tokens": 73,
         "completion_tokens": 84,
-        "tokens_per_second": 27.50816171580051
+        "tokens_per_second": 27.262581998519863
       },
       "tool_call": {
-        "seconds": 1.5988342920027208,
+        "seconds": 1.5868482080000206,
         "passed": true
       },
       "process": {
-        "rss_kib": 12205760,
-        "cpu_percent": 8.5,
-        "elapsed": "00:06"
+        "rss_kib": 12268736,
+        "cpu_percent": 12.4,
+        "elapsed": "00:21"
       },
-      "swap_before": "total = 4096.00M  used = 3515.75M  free = 580.25M  (encrypted)",
-      "swap_after": "total = 4096.00M  used = 3515.75M  free = 580.25M  (encrypted)",
-      "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded",
-      "passed": true
-    },
-    {
-      "context_tokens": 16384,
-      "reported_context_tokens": 16384,
-      "cold_load_seconds": 1.238794458011398,
-      "generation": {
-        "seconds": 3.059010540979216,
-        "actual": "PROFILE_OK",
-        "prompt_tokens": 73,
-        "completion_tokens": 84,
-        "tokens_per_second": 27.45985960973867
-      },
-      "tool_call": {
-        "seconds": 1.5558495839941315,
-        "passed": true
-      },
-      "process": {
-        "rss_kib": 12402784,
-        "cpu_percent": 12.6,
-        "elapsed": "00:05"
-      },
-      "swap_before": "total = 4096.00M  used = 3515.75M  free = 580.25M  (encrypted)",
-      "swap_after": "total = 4096.00M  used = 3515.75M  free = 580.25M  (encrypted)",
+      "swap_before": "total = 0.00M  used = 0.00M  free = 0.00M  (encrypted)",
+      "swap_after": "total = 0.00M  used = 0.00M  free = 0.00M  (encrypted)",
       "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded",
       "passed": true
     }
   ],
-  "accepted_context_tokens": 16384,
+  "accepted_context_tokens": 131072,
   "passed": true
 }

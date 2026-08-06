@@ -11,9 +11,10 @@ redacted as `<repo>` before publication.
 structured tool calling, records RSS/swap/thermal state, and proves each server
 is unloaded before the next profile starts.
 
-`make benchmark-gpt-oss` performs the same sequential gate for the larger model
-and writes `profiles-gpt-oss.json`. A failed profile does not change the default
-Granite selection.
+`make benchmark-coder` is the provisional gate for Qwen2.5 Coder and writes
+`profiles-coder.json`. Current recorded evidence fails structured tool calling,
+so the profile remains non-default. `make benchmark-gpt-oss` performs the larger
+model gate and writes `profiles-gpt-oss.json`.
 
 `make benchmark-qwen36` is the required provisional gate for Qwen3.6 27B and
 writes `profiles-qwen36.json`. On the 24 GB target, monitor memory pressure and

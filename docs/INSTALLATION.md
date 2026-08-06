@@ -8,9 +8,10 @@ The repository currently supports:
 - approximately 24 GB of unified memory for the recorded profiles;
 - Zsh, Make, Git, Python 3, Node.js/npm, CMake, `jq`, `shellcheck`, `curl`,
   `lsof`, and standard macOS tools including `sandbox-exec` and `shasum`;
-- sufficient disk space for local builds, wheel caches, and models. Granite is
-  about 5.35 GB, gpt-oss about 12.11 GB, and the provisional Qwen3.6 Q4_K_M
-  file about 19.10 GB before runtime caches.
+-   sufficient disk space for local builds, wheel caches, and models. The coding
+  sufficient disk space for local builds, wheel caches, and models. The gpt-oss
+  default is about 12.11 GB, Granite about 5.35 GB, Qwen2.5 Coder about 4.68 GB,
+  and the provisional Qwen3.6 Q4_K_M file about 19.10 GB before runtime caches.
 
 Other operating systems are not currently supported because the network
 boundary and process checks are macOS-specific.

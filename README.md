@@ -13,15 +13,17 @@ download is part of the normal workflow.
 
 - Exact-pinned `opencode-ai@1.18.13` with isolated project-local state.
 - Metal-enabled `llama.cpp` with one serialized inference slot.
-- IBM Granite 4.1 8B as the default model, gpt-oss-20b as an optional profile,
-  and Qwen3.6 27B Q4_K_M as a pinned but unaccepted provisional profile.
+- IBM Granite 4.1 8B as a selectable profile, gpt-oss-20b as the accepted
+  default (128K context), and provisional `coder` / Qwen3.6 profiles that remain
+  unaccepted until their tool-call and memory gates pass.
+- Supervised `make up` / `make down` session lifecycle without login items.
 - Six bounded agent roles with one-level delegation and fail-closed permissions.
 - Optional SearXNG research through a DLP-, SSRF-, redirect-, and size-limited
   localhost MCP gateway.
 - PDF, DOCX, PPTX, and XLSX import into canonical Markdown, with preserving
   export and render workflows.
-- Behavioral network probes, PID identity validation, checksums, and repeatable
-  acceptance benchmarks.
+- Behavioral network probes for every sandbox profile, PID identity validation,
+  checksums, and repeatable acceptance benchmarks.
 
 ## Platform and status
 
@@ -47,23 +49,39 @@ make test
 make network-audit
 ```
 
-Start the default Granite model in one terminal:
+Start the default coding session (background gpt-oss model + foreground agent):
+
+```sh
+make up
+```
+
+Stop recorded background services:
+
+```sh
+make down
+```
+
+Or start the model and agent separately. The default profile is `gpt-oss`:
 
 ```sh
 make model-start
 ```
 
-Start OpenCode in another:
+Start OpenCode in another terminal:
 
 ```sh
 make agent
 ```
 
-For gpt-oss, both commands must use the same profile:
+For Granite, both commands must use the same profile:
 
 ```sh
-make model-start PROFILE=gpt-oss
-make agent PROFILE=gpt-oss
+make model-start PROFILE=granite
+make agent PROFILE=granite
+```
+
+```sh
+make up PROFILE=granite
 ```
 
 Qwen3.6 27B uses `PROFILE=qwen36`. Its 19.1 GB Q4_K_M file is not installed

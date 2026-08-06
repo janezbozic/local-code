@@ -13,28 +13,35 @@ are skipped when the optional environment is absent.
 
 ## Model server
 
-`make model-start` runs in the foreground by default. It checks the pinned project-local binary, Metal-enabled CMake cache, model existence and checksum, fixed localhost settings, sandbox behavior, and port ownership before execution.
+`make up` is the supervised single-user path: it starts the accepted gpt-oss
+model in the background if needed, waits for health, optionally starts restricted
+search when `SEARCH=1`, and then runs OpenCode in the foreground. `make down`
+stops recorded search and model services. Neither command installs login items
+or automatic restart.
+
+`make model-start` remains available for an explicit server-only session. It
+checks the pinned project-local binary, Metal-enabled CMake cache, model
+existence and checksum, fixed localhost settings, sandbox behavior, and port
+ownership before execution.
 
 ```sh
+make up
+# or
 make model-start
 ```
 
-Granite remains the default. Select the larger, provisional profile explicitly:
+gpt-oss is the accepted default at 128K context. Select other profiles explicitly:
 
 ```sh
-make model-start PROFILE=gpt-oss
-make agent PROFILE=gpt-oss
-```
-
-The provisional Qwen3.6 profile uses:
-
-```sh
+make up PROFILE=granite
+make model-start PROFILE=coder
 make model-start PROFILE=qwen36
 make agent PROFILE=qwen36
 ```
 
-Do not treat Qwen3.6 as accepted until `make benchmark-qwen36` passes without
-new swap use or thermal warnings. Its Q4_K_M weights alone are about 19.1 GB.
+Do not treat `coder` or Qwen3.6 as accepted until their profile benchmarks pass
+structured tool calling without new swap use or thermal warnings. Qwen3.6 Q4_K_M
+weights alone are about 19.1 GB.
 
 The agent profile must match the currently running server. Never start both
 models concurrently. The model server listens only on `127.0.0.1:8080`.
@@ -80,9 +87,8 @@ never install or fetch converters implicitly.
 ## Incident shutdown
 
 1. Exit OpenCode normally.
-2. Run `make model-stop` if background mode was used.
-3. Run `make search-stop` if restricted search was started.
-4. Run `make network-audit` and investigate any unexpected workbench listener or PID record.
+2. Run `make down`, or `make model-stop` / `make search-stop` for the recorded services you started.
+3. Run `make network-audit` and investigate any unexpected workbench listener or PID record.
 
 Do not manually delete PID records until process identity and ownership have
 been investigated. See [TROUBLESHOOTING.md](TROUBLESHOOTING.md).

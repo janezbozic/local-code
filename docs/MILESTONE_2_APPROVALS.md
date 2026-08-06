@@ -70,4 +70,18 @@ This profile is not accepted yet. The file consumes most of a 24 GB machine's
 available memory before KV cache and operating-system use. After explicit
 download approval, start at 8K context and run `make benchmark-qwen36` with port
 8080 free. A failed memory, swap, thermal, generation, or tool-call gate must
-leave Granite as the default.
+leave the coding default unchanged.
+
+## 7. Coding-default Qwen2.5 Coder 7B model
+
+```sh
+curl --fail --location --output models/qwen2.5-coder-7b-instruct-q4_k_m.gguf https://huggingface.co/Qwen/Qwen2.5-Coder-7B-Instruct-GGUF/resolve/main/qwen2.5-coder-7b-instruct-q4_k_m.gguf
+shasum -a 256 models/qwen2.5-coder-7b-instruct-q4_k_m.gguf
+```
+
+The exact size must be 4,683,073,536 bytes and SHA-256 must be
+`509287f78cb4d4cf6b3843734733b914b2c158e43e22a7f4bf5e963800894d3c`.
+Delete or quarantine a mismatched download; never start it. After install, run
+`make benchmark-coder` with port 8080 free. Do not make this the default until
+structured tool calling passes; current evidence in `benchmarks/profiles-coder.json`
+shows generation succeeding while required tool calls fail.

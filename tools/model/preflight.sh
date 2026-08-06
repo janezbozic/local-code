@@ -17,7 +17,7 @@ grep -Eq '^GGML_METAL:BOOL=ON$' "${root}/${LLAMA_BUILD_CACHE}" || die "llama.cpp
 [[ -f "${root}/${LLAMA_MODEL}" ]] || die "model is not installed at ${LLAMA_MODEL}; review docs/MILESTONE_2_APPROVALS.md"
 
 actual_sha="$(shasum -a 256 "${root}/${LLAMA_MODEL}" | awk '{print $1}')"
-[[ "${actual_sha}" == "${LLAMA_MODEL_SHA256}" ]] || die "model SHA-256 mismatch for ${MODEL_PROFILE:-granite}"
+[[ "${actual_sha}" == "${LLAMA_MODEL_SHA256}" ]] || die "model SHA-256 mismatch for ${MODEL_PROFILE:-gpt-oss}"
 
 if /usr/sbin/lsof -nP -iTCP:"${LLAMA_PORT}" -sTCP:LISTEN 2>/dev/null | grep -q .; then
   die "TCP port ${LLAMA_PORT} is already occupied"

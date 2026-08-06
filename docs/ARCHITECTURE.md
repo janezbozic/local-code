@@ -48,13 +48,13 @@ build, confirms that port 8080 is free, and starts `llama-server` on
 
 | Profile | Model | Context | Role |
 |---|---|---:|---|
-| `granite` | Granite 4.1 8B Q4_K_M | 16,384 | Default, accepted |
-| `gpt-oss` | gpt-oss-20b MXFP4 | 8,192 runtime profile | Optional larger model |
+| `gpt-oss` | gpt-oss-20b MXFP4 | 131,072 | Default, accepted |
+| `granite` | Granite 4.1 8B Q4_K_M | 16,384 | Selectable accepted profile |
+| `coder` | Qwen2.5 Coder 7B Instruct Q4_K_M | 16,384 | Provisional; tool-call gate failing |
 | `qwen36` | Qwen3.6 27B Q4_K_M | 8,192 | Provisional; not accepted on 24 GB |
 
-The tracked profile benchmark also records a 16K gpt-oss comparison, but the
-runtime profile currently remains 8K. Always match the model server and agent
-profile.
+Always match the model server and agent profile. gpt-oss 128K acceptance evidence
+is in `benchmarks/profiles-gpt-oss.json`.
 
 Qwen3.6's GGUF metadata advertises a much larger native context, but this
 workbench deliberately starts at 8K because the 19.1 GB quantized weights leave
@@ -117,7 +117,7 @@ OpenCode UI extensions, which are outside this repository's security boundary.
 ## Trust boundaries and limitations
 
 - `sandbox-exec` is deprecated and must be behaviorally revalidated on each
-  supported macOS release.
+  supported macOS release. See [SANDBOX.md](SANDBOX.md).
 - Local models can produce unsafe or incorrect commands; permission prompts and
   review remain required.
 - SearXNG and the gateway intentionally cross the network only when manually

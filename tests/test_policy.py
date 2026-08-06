@@ -46,14 +46,17 @@ def main() -> int:
         fail("local provider must use the fixed non-secret compatibility key")
     if config.get("plugin"):
         fail("runtime config must not load plugins")
-    if config.get("model") != "local-llama/granite-4.1-8b":
-        fail("Granite 4.1 8B must be the active local model")
-    model = local_provider["models"]["granite-4.1-8b"]
-    if model.get("limit") != {"context": 16384, "output": 2048}:
-        fail("local model must use the 16K/2K trial token profile")
-    gpt_oss = local_provider["models"].get("gpt-oss-20b", {})
-    if gpt_oss.get("limit") != {"context": 16384, "output": 2048}:
-        fail("selectable gpt-oss-20b profile is missing or malformed")
+    if config.get("model") != "local-llama/gpt-oss-20b":
+        fail("gpt-oss-20b must be the active local model")
+    model = local_provider["models"]["gpt-oss-20b"]
+    if model.get("limit") != {"context": 131072, "output": 2048}:
+        fail("gpt-oss default must use the accepted 128K/2K token profile")
+    granite = local_provider["models"].get("granite-4.1-8b", {})
+    if granite.get("limit") != {"context": 16384, "output": 2048}:
+        fail("selectable Granite profile is missing or malformed")
+    coder = local_provider["models"].get("qwen2.5-coder-7b", {})
+    if coder.get("limit") != {"context": 16384, "output": 2048}:
+        fail("selectable provisional coder profile is missing or malformed")
     qwen36 = local_provider["models"].get("qwen3.6-27b", {})
     if qwen36.get("limit") != {"context": 8192, "output": 2048}:
         fail("selectable provisional Qwen3.6-27B profile is missing or malformed")
@@ -72,6 +75,14 @@ def main() -> int:
     if config.get("default_agent") != "coordinator":
         fail("coordinator must be the default agent")
     agents = config["agent"]
+    coordinator_prompt = agents["coordinator"].get("prompt", "")
+    for phrase in ("worktree", "reviewer", "serialized inference"):
+        if phrase not in coordinator_prompt:
+            fail(f"coordinator coding reliability prompt is missing: {phrase}")
+    implementer_prompt = agents["implementer"].get("prompt", "")
+    for phrase in ("smallest correct change", "opencode.json"):
+        if phrase not in implementer_prompt:
+            fail(f"implementer coding reliability prompt is missing: {phrase}")
     if agents["coordinator"].get("permission", {}).get("task") != "allow":
         fail("only the coordinator must be able to delegate")
     for name in expected_agents - {"coordinator"}:
@@ -92,6 +103,19 @@ def main() -> int:
         "output/**": "allow",
     }:
         fail("document specialist write scope is too broad or incomplete")
+    implementer_writes = agents["implementer"].get("permission", {}).get("edit", {})
+    if implementer_writes.get("*") != "allow":
+        fail("implementer must allow ordinary repository edits")
+    for path in (
+        "opencode.json",
+        "AGENTS.md",
+        "config/firewall/**",
+        "config/versions.env",
+        "tools/web/**",
+        "knowledge/originals/**",
+    ):
+        if implementer_writes.get(path) != "deny":
+            fail(f"implementer must deny edits to security boundary path: {path}")
 
     permissions = config["permission"]
     for expected in {"external_directory", "webfetch", "websearch"}:
@@ -105,6 +129,23 @@ def main() -> int:
         fail("llama.cpp must use the 16K context trial profile")
     if runtime.get("LLAMA_PARALLEL") != "1":
         fail("only one inference slot is permitted")
+
+    web_runtime = parse_env(ROOT / "config/web/runtime.env")
+    if web_runtime.get("SEARXNG_HOST") != "127.0.0.1":
+        fail("SearXNG host must be loopback")
+    if web_runtime.get("WEB_GATEWAY_HOST") != "127.0.0.1":
+        fail("web gateway host must be loopback")
+    search_start = (ROOT / "tools/web/start.sh").read_text(encoding="utf-8")
+    for required in ('assert_loopback "${SEARXNG_HOST}"', 'assert_loopback "${WEB_GATEWAY_HOST}"'):
+        if required not in search_start:
+            fail(f"search start must enforce loopback: {required}")
+    check_script = (ROOT / "tools/check.sh").read_text(encoding="utf-8")
+    if "tools/web/*.sh" not in check_script:
+        fail("make check must shellcheck tools/web scripts")
+    if "tools/workbench/*.sh" not in check_script:
+        fail("make check must shellcheck tools/workbench scripts")
+    if "sandbox-probe.py --profile" not in check_script:
+        fail("make check must behaviorally probe every sandbox profile")
 
     versions = parse_env(ROOT / "config/versions.env")
     if versions.get("OPENCODE_CHANNEL") != "stable":
@@ -172,6 +213,7 @@ def main() -> int:
         fail("VS Code terminals do not prefer the strict OpenCode shim")
 
     for profile, expected in {
+        "coder": ("qwen2.5-coder-7b", versions.get("CODER_MODEL_SHA256")),
         "granite": ("granite-4.1-8b", versions.get("MODEL_SHA256")),
         "gpt-oss": ("gpt-oss-20b", versions.get("GPT_OSS_MODEL_SHA256")),
         "qwen36": ("qwen3.6-27b", versions.get("QWEN36_MODEL_SHA256")),
@@ -179,6 +221,12 @@ def main() -> int:
         values = parse_env(ROOT / f"config/llama/profiles/{profile}.env")
         if values.get("LLAMA_MODEL_ID") != expected[0] or values.get("LLAMA_MODEL_SHA256") != expected[1]:
             fail(f"model profile pin is out of sync: {profile}")
+        if profile == "gpt-oss" and values.get("LLAMA_CONTEXT") != "131072":
+            fail("gpt-oss default must use accepted 128K context")
+        if profile == "granite" and values.get("LLAMA_CONTEXT") != "16384":
+            fail("granite must remain on 16K until 32K evidence lands")
+        if profile in {"qwen36", "coder"} and values.get("LLAMA_CONTEXT") not in {"8192", "16384"}:
+            fail(f"provisional profile context is malformed: {profile}")
 
     rg_guard = (ROOT / "tools/opencode/rg-capped.sh").read_text(encoding="utf-8")
     for excluded in [".git", ".tools", ".runtime", "models", "knowledge/originals", "output"]:
@@ -196,6 +244,8 @@ def main() -> int:
         "check",
         "model-start",
         "model-stop",
+        "up",
+        "down",
         "search-start",
         "search-stop",
         "agent",
@@ -204,6 +254,7 @@ def main() -> int:
         "document-export",
         "document-render",
         "test",
+        "benchmark-coder",
     }
     makefile = (ROOT / "Makefile").read_text(encoding="utf-8")
     defined = set(re.findall(r"^([a-z][a-z0-9-]*):", makefile, re.M))

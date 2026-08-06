@@ -2,7 +2,7 @@
   "$schema": "./config/opencode-v1.schema.json",
   "share": "disabled",
   "autoupdate": false,
-  "model": "local-llama/granite-4.1-8b",
+  "model": "local-llama/gpt-oss-20b",
   "provider": {
     "local-llama": {
       "name": "Local llama.cpp",
@@ -12,6 +12,17 @@
         "apiKey": "local-no-auth"
       },
       "models": {
+        "gpt-oss-20b": {
+          "name": "OpenAI gpt-oss-20b MXFP4 (local)",
+          "modalities": {
+            "input": ["text"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 131072,
+            "output": 2048
+          }
+        },
         "granite-4.1-8b": {
           "name": "IBM Granite 4.1 8B Q4_K_M (local)",
           "modalities": {
@@ -23,8 +34,8 @@
             "output": 2048
           }
         },
-        "gpt-oss-20b": {
-          "name": "OpenAI gpt-oss-20b MXFP4 (local)",
+        "qwen2.5-coder-7b": {
+          "name": "Qwen2.5 Coder 7B Instruct Q4_K_M (local, provisional)",
           "modalities": {
             "input": ["text"],
             "output": ["text"]
@@ -78,7 +89,7 @@
       "mode": "primary",
       "description": "Plans work, delegates one level, and makes final decisions.",
       "steps": 24,
-      "prompt": "Coordinate work with one inference request at a time. Delegate only to the named bounded subagents. Review their evidence before deciding. Never use web tools directly.",
+      "prompt": "Coordinate one coding task at a time with serialized inference. Prefer small diffs in a dedicated git worktree. Delegate explorer for read-only inspection, implementer for edits/checks, reviewer before integration, researcher only for approved web facts, and document-specialist for document lifecycle work. Require evidence before deciding. Never use web tools directly. Do not claim a change is done without a reviewer pass on the worktree diff.",
       "permission": {
         "*": "ask",
         "read": "allow",
@@ -102,6 +113,7 @@
       "mode": "subagent",
       "description": "Read-only repository and Git/LSP inspector.",
       "steps": 12,
+      "prompt": "Inspect with read/glob/grep/list only. Prefer narrow paths and small result sets. Summarize findings with file paths; do not edit.",
       "permission": {
         "*": "deny",
         "read": "allow",
@@ -114,10 +126,19 @@
       "mode": "subagent",
       "description": "Makes scoped repository edits and runs approved local checks; no web.",
       "steps": 18,
+      "prompt": "Make the smallest correct change for the assigned task. Edit only files needed for that task. Run the repository's local checks when asked. Do not touch firewall profiles, the web gateway, originals, version pins, or opencode.json. Do not use web tools or delegate.",
       "permission": {
         "*": "ask",
         "read": "allow",
-        "edit": "allow",
+        "edit": {
+          "*": "allow",
+          "opencode.json": "deny",
+          "AGENTS.md": "deny",
+          "config/firewall/**": "deny",
+          "config/versions.env": "deny",
+          "tools/web/**": "deny",
+          "knowledge/originals/**": "deny"
+        },
         "webfetch": "deny",
         "websearch": "deny",
         "local-safe-web*": "deny",
@@ -128,6 +149,7 @@
       "mode": "subagent",
       "description": "Read-only reviewer of diffs, tests, and security boundaries.",
       "steps": 12,
+      "prompt": "Review the provided diff and test evidence. Flag correctness, security-boundary, and missing-test defects. Prefer concrete findings over style nits. Do not edit.",
       "permission": {
         "*": "deny",
         "read": "allow",

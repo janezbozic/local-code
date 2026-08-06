@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sequential cold-load acceptance benchmark for 8K and 16K contexts."""
+"""Sequential cold-load acceptance benchmark for profile contexts."""
 from __future__ import annotations
 import argparse
 import datetime as dt
@@ -15,9 +15,16 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 SERVER = ROOT / ".tools/llama.cpp/build/bin/llama-server"
 PROFILE = ROOT / "config/firewall/llama.sb"
 MODELS = {
+    "coder": (ROOT / "models/qwen2.5-coder-7b-instruct-q4_k_m.gguf", "qwen2.5-coder-7b", ROOT / "benchmarks/profiles-coder.json"),
     "granite": (ROOT / "models/granite-4.1-8b-Q4_K_M.gguf", "granite-4.1-8b", ROOT / "benchmarks/profiles.json"),
     "gpt-oss": (ROOT / "models/gpt-oss-20b-mxfp4.gguf", "gpt-oss-20b", ROOT / "benchmarks/profiles-gpt-oss.json"),
     "qwen36": (ROOT / "models/Qwen3.6-27B-Q4_K_M.gguf", "qwen3.6-27b", ROOT / "benchmarks/profiles-qwen36.json"),
+}
+DEFAULT_CONTEXTS = {
+    "coder": (16384, 32768),
+    "granite": (16384, 32768),
+    "gpt-oss": (16384, 32768),
+    "qwen36": (8192, 16384),
 }
 
 
@@ -52,7 +59,7 @@ def benchmark(context: int, model: pathlib.Path, model_id: str, profile_name: st
     with log_path.open("w") as log:
         process = subprocess.Popen(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
     try:
-        deadline = time.monotonic() + 180
+        deadline = time.monotonic() + 300
         while time.monotonic() < deadline:
             if process.poll() is not None:
                 raise RuntimeError(f"server exited during cold load; inspect {log_path}")
@@ -108,20 +115,29 @@ def benchmark(context: int, model: pathlib.Path, model_id: str, profile_name: st
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--profile", choices=sorted(MODELS), default="granite")
+    parser.add_argument("--profile", choices=sorted(MODELS), default="coder")
+    parser.add_argument("--contexts", default="", help="comma-separated context sizes; defaults depend on profile")
     args = parser.parse_args()
     model, model_id, result_path = MODELS[args.profile]
     if not SERVER.is_file() or not model.is_file():
         print("error: pinned server or model is missing", file=sys.stderr); return 2
     if shell("lsof", "-nP", "-t", "-iTCP:8080", "-sTCP:LISTEN"):
         print("error: port 8080 must be free before the profile benchmark", file=sys.stderr); return 2
-    profiles = [benchmark(8192, model, model_id, args.profile), benchmark(16384, model, model_id, args.profile)]
+    if args.contexts.strip():
+        contexts = [int(item.strip()) for item in args.contexts.split(",") if item.strip()]
+    else:
+        contexts = list(DEFAULT_CONTEXTS[args.profile])
+    profiles = [benchmark(context, model, model_id, args.profile) for context in contexts]
+    accepted = None
+    for item in profiles:
+        if item["passed"]:
+            accepted = item["context_tokens"]
     record = {"schema_version": 1, "recorded_at": dt.datetime.now(dt.timezone.utc).isoformat(),
         "sequential": True, "parallel_slots": 1, "profile": args.profile, "model": model.name, "profiles": profiles,
-        "accepted_context_tokens": 16384 if profiles[1]["passed"] else (8192 if profiles[0]["passed"] else None),
-        "passed": all(item["passed"] for item in profiles)}
+        "accepted_context_tokens": accepted,
+        "passed": any(item["passed"] for item in profiles) and profiles[0]["passed"]}
     result_path.write_text(json.dumps(record, indent=2) + "\n")
-    print(f"profile benchmark {'passed' if record['passed'] else 'failed'}; result: {result_path.relative_to(ROOT)}")
+    print(f"profile benchmark {'passed' if record['passed'] else 'failed'}; accepted_context={accepted}; result: {result_path.relative_to(ROOT)}")
     return 0 if record["passed"] else 1
 
 

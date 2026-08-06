@@ -1,62 +1,62 @@
 {
   "schema_version": 1,
-  "recorded_at": "2026-08-06T08:08:20.745455+00:00",
+  "recorded_at": "2026-08-06T07:48:26.894195+00:00",
   "sequential": true,
   "parallel_slots": 1,
-  "profile": "granite",
-  "model": "granite-4.1-8b-Q4_K_M.gguf",
+  "profile": "coder",
+  "model": "qwen2.5-coder-7b-instruct-q4_k_m.gguf",
   "profiles": [
     {
       "context_tokens": 16384,
       "reported_context_tokens": 16384,
-      "cold_load_seconds": 3.294285542011494,
+      "cold_load_seconds": 0.8297454169951379,
       "generation": {
-        "seconds": 0.31155729200690985,
+        "seconds": 0.42985112499445677,
         "actual": "PROFILE_OK",
-        "prompt_tokens": 14,
+        "prompt_tokens": 35,
         "completion_tokens": 3,
-        "tokens_per_second": 9.629047616492523
+        "tokens_per_second": 6.9791605175831215
       },
       "tool_call": {
-        "seconds": 1.908419916027924,
-        "passed": true
+        "seconds": 7.182121207995806,
+        "passed": false
       },
       "process": {
-        "rss_kib": 7859056,
-        "cpu_percent": 1.1,
-        "elapsed": "00:05"
+        "rss_kib": 5689056,
+        "cpu_percent": 5.0,
+        "elapsed": "00:08"
       },
       "swap_before": "total = 3072.00M  used = 1644.00M  free = 1428.00M  (encrypted)",
       "swap_after": "total = 3072.00M  used = 1644.00M  free = 1428.00M  (encrypted)",
       "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded",
-      "passed": true
+      "passed": false
     },
     {
       "context_tokens": 32768,
       "reported_context_tokens": 32768,
-      "cold_load_seconds": 1.4330834579886869,
+      "cold_load_seconds": 1.0264984160021413,
       "generation": {
-        "seconds": 0.33683949999976903,
+        "seconds": 0.4525831670034677,
         "actual": "PROFILE_OK",
-        "prompt_tokens": 14,
+        "prompt_tokens": 35,
         "completion_tokens": 3,
-        "tokens_per_second": 8.906318884816232
+        "tokens_per_second": 6.628615951103224
       },
       "tool_call": {
-        "seconds": 1.9357526669919025,
-        "passed": true
+        "seconds": 7.302352249971591,
+        "passed": false
       },
       "process": {
-        "rss_kib": 10564448,
-        "cpu_percent": 6.2,
-        "elapsed": "00:04"
+        "rss_kib": 6604752,
+        "cpu_percent": 3.2,
+        "elapsed": "00:09"
       },
       "swap_before": "total = 3072.00M  used = 1644.00M  free = 1428.00M  (encrypted)",
       "swap_after": "total = 3072.00M  used = 1644.00M  free = 1428.00M  (encrypted)",
       "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded",
-      "passed": true
+      "passed": false
     }
   ],
-  "accepted_context_tokens": 32768,
-  "passed": true
+  "accepted_context_tokens": null,
+  "passed": false
 }

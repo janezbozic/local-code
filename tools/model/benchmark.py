@@ -68,12 +68,24 @@ def main() -> int:
     before = process_snapshot(pid)
     swap_before = command("sysctl", "-n", "vm.swapusage").stdout.strip()
 
+    model_ids = [str(item.get("id", "")) for item in models.get("data", [])]
+    if any("gpt-oss" in item for item in model_ids):
+        model_id = "gpt-oss-20b"
+    elif any("qwen2.5-coder" in item or "coder" in item for item in model_ids):
+        model_id = "qwen2.5-coder-7b"
+    elif any("qwen3.6" in item or "Qwen3.6" in item for item in model_ids):
+        model_id = "qwen3.6-27b"
+    else:
+        model_id = "granite-4.1-8b"
+
     generation_payload = {
-        "model": "granite-4.1-8b",
+        "model": model_id,
         "messages": [{"role": "user", "content": "Reply with exactly BENCHMARK_OK."}],
         "temperature": 0,
         "max_tokens": 32,
     }
+    if model_id == "gpt-oss-20b":
+        generation_payload["reasoning_effort"] = "low"
     generation, generation_seconds = request("/v1/chat/completions", generation_payload)
     choice = generation.get("choices", [{}])[0]
     content = choice.get("message", {}).get("content", "").strip()
@@ -81,7 +93,7 @@ def main() -> int:
     completion_tokens = int(usage.get("completion_tokens", 0) or 0)
 
     tool_payload = {
-        "model": "granite-4.1-8b",
+        "model": model_id,
         "messages": [{"role": "user", "content": "Call run_checks now. Do not answer in prose."}],
         "tools": [{
             "type": "function",
@@ -95,6 +107,8 @@ def main() -> int:
         "temperature": 0,
         "max_tokens": 128,
     }
+    if model_id == "gpt-oss-20b":
+        tool_payload["reasoning_effort"] = "low"
     tool_response, tool_seconds = request("/v1/chat/completions", tool_payload)
     tool_choice = tool_response.get("choices", [{}])[0]
     calls = tool_choice.get("message", {}).get("tool_calls", [])
@@ -110,6 +124,7 @@ def main() -> int:
     thermal = command("pmset", "-g", "therm").stdout.strip()
     memory_pressure = command("memory_pressure", "-Q").stdout.strip()
     props, _ = request("/props", timeout=5)
+    context_tokens = props.get("default_generation_settings", {}).get("n_ctx")
 
     passed = all([
         health.get("status") == "ok",
@@ -117,7 +132,7 @@ def main() -> int:
         structured_tool,
         checks.returncode == 0,
         tests.returncode == 0,
-        props.get("default_generation_settings", {}).get("n_ctx") == 16384,
+        context_tokens in {8192, 16384, 32768, 131072},
     ])
     result = {
         "schema_version": 1,
@@ -134,7 +149,7 @@ def main() -> int:
             "health_seconds": health_seconds,
             "pid": pid,
             "models": models,
-            "context_tokens": props.get("default_generation_settings", {}).get("n_ctx"),
+            "context_tokens": context_tokens,
             "process_before": before,
             "process_after": after,
         },

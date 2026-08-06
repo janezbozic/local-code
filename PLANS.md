@@ -1,13 +1,13 @@
 # Execution Plan
 
-Last updated: 2026-08-05
+Last updated: 2026-08-06
 
 ## Invariants
 
 1. LLM inference is local and uses only a server bound to `127.0.0.1`.
 2. OpenCode, llama.cpp, and document tools cannot make non-loopback network connections during normal operation.
 3. Dependencies, source, and models are downloaded only through explicit, reviewed commands.
-4. Services have no automatic startup and are stopped manually.
+4. Services have no automatic startup and are stopped manually through supervised targets such as `make up` / `make down`.
 5. Only one inference slot is permitted until memory measurements prove otherwise.
 6. Web results are untrusted; later web access is mediated by the restricted local gateway.
 7. Canonical new documents are Markdown. Originals and derived outputs never overwrite one another.
@@ -26,11 +26,12 @@ Last updated: 2026-08-05
 ## Milestone 1 decisions
 
 - OpenCode V1 is selected and exact-pinned to npm package `opencode-ai@1.18.13`; upgrades remain manual. No custom VS Code extension is maintained by this repository.
-- The only configured provider is `local-llama`, using `http://127.0.0.1:8080/v1`. The accepted default is IBM Granite 4.1 8B Q4_K_M with model ID `granite-4.1-8b`; it passed a native llama.cpp structured tool-call test. The larger gpt-oss-20b model remains available through its explicit profile. Qwen3.6 27B Q4_K_M is exact-pinned as a provisional 8K profile but remains unaccepted until it passes the memory, swap, thermal, generation, and tool-call gates on the 24 GB target.
+- The only configured provider is `local-llama`, using `http://127.0.0.1:8080/v1`. The accepted default is gpt-oss-20b MXFP4 with model ID `gpt-oss-20b` at 128K context. IBM Granite 4.1 8B remains a selectable accepted profile at 16K. Qwen2.5 Coder 7B and Qwen3.6 27B are pinned provisional profiles and remain unaccepted until they pass structured tool-call, memory, swap, and thermal gates on the target machine.
 - OpenCode state is isolated under `.runtime/opencode`; existing global credentials and plugins are not loaded.
-- `sandbox-exec` enforces non-loopback denial. Its deprecated status is an explicit risk, mitigated by a mandatory behavioral probe.
+- `sandbox-exec` enforces non-loopback denial. Its deprecated status is an explicit risk, mitigated by mandatory behavioral probes on every firewall profile and the replacement path in `docs/SANDBOX.md`.
 - llama.cpp is built inside `.tools/llama.cpp` with Metal enabled. Models reside under gitignored `models/`.
-- The 8192-token baseline failed the tool-reliability gate: repository glob/read output forced repeated compactions, and the second compaction produced no summary. The accepted Granite profile therefore uses 16384 context tokens, one parallel slot, and a 2048-token maximum response. OpenCode V1 compaction is automatic, prunes old tool output, and reserves 2048 tokens; memory, swap, and thermal observations are recorded in the benchmark evidence.
+- The 8192-token baseline failed the tool-reliability gate: repository glob/read output forced repeated compactions, and the second compaction produced no summary. Accepted profiles therefore use 16384 context tokens, one parallel slot, and a 2048-token maximum response until a clean 32K profile benchmark is recorded. OpenCode V1 compaction is automatic, prunes old tool output, and reserves 2048 tokens.
+- `make up` / `make down` provide supervised session lifecycle without login items, launch agents, or automatic restart.
 - OpenCode preview searches can re-include gitignored paths when the model supplies a positive glob and can accept model-selected result limits of 2000. A repository-owned ripgrep guard excludes toolchains, runtime state, models, originals, and outputs, and caps stdout at 250 rows so a single tool result cannot exceed the model context.
 - No RAG, browser automation, database, container runtime, reverse proxy, telemetry stack, or worker queue is included.
 
@@ -39,12 +40,11 @@ Last updated: 2026-08-05
 ### Milestone 2 — model lifecycle and benchmark
 
 The exact OpenCode build, llama.cpp revision, and model artifacts are pinned in
-`config/versions.env`. The active Granite Q4_K_M profile uses Metal, 16K context,
-one slot, and a structured tool-call gate. Machine-readable acceptance evidence
-is in `benchmarks/latest.json`; sequential 8K/16K cold-process comparisons and
-clean unload proof are in `benchmarks/profiles.json`. Both profiles passed with
-unchanged swap and no recorded thermal warning; 16K remains selected because it
-prevents the tool-result compaction failures observed at 8K.
+`config/versions.env`. The accepted gpt-oss MXFP4 default uses Metal, 128K
+context, one slot, and a structured tool-call gate; evidence is in
+`benchmarks/profiles-gpt-oss.json`. Granite remains a selectable 16K profile.
+The `coder` profile is pinned but currently fails the structured tool-call
+gate, so it must not become the default.
 
 ### Milestone 3 — restricted web
 

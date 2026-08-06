@@ -7,9 +7,11 @@ take precedence over convenience. Changes must not introduce hosted inference,
 implicit downloads, automatic startup, telemetry, non-loopback bindings, or
 parallel model requests.
 
-The project does not yet declare an open-source license. External contributors
-should wait for an explicit license and contribution policy before submitting
-substantial code.
+This project is licensed under the [GNU General Public License v3.0](LICENSE).
+By contributing, you agree that your contributions are licensed under the same
+terms. Keep changes aligned with the supported publish scope in `README.md`
+(macOS-first; Linux and WSL2 remain acceptance-pending until host evidence
+lands).
 
 ## Development workflow
 

@@ -21,6 +21,7 @@ REQUIRED = {
     "docs/TROUBLESHOOTING.md",
     "docs/DOCUMENTS.md",
     "docs/VSCODE.md",
+    "docs/SANDBOX.md",
 }
 EXCLUDED_PARTS = {".git", ".tools", ".runtime", ".venv", "models", "output"}
 MARKDOWN_LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")

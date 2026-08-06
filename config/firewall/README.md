@@ -12,7 +12,7 @@ OpenCode configuration is necessary but not sufficient. The runtime wrapper ther
 4. a provider allowlist and explicit web/provider permission denials; and
 5. an OS-level `sandbox-exec` profile denying non-loopback networking.
 
-`sandbox-exec` is deprecated by Apple. This repository treats its availability and observed behavior as a startup prerequisite, not a permanent guarantee. `tools/sandbox-probe.py` verifies that loopback succeeds and an external IP is denied. Startup fails closed if that probe fails. A future macOS release that removes or weakens this behavior blocks the workbench until a replacement boundary is reviewed.
+`sandbox-exec` is deprecated by Apple. This repository treats its availability and observed behavior as a startup prerequisite, not a permanent guarantee. `tools/sandbox-probe.py` verifies that loopback succeeds and an external IP is denied for every firewall profile during `make check`. Startup fails closed if that probe fails. See [docs/SANDBOX.md](../../docs/SANDBOX.md) for the replacement path. A future macOS release that removes or weakens this behavior blocks the workbench until a replacement boundary is reviewed.
 
 The profiles intentionally focus on networking. OpenCode tool permissions enforce interactive file/command approvals, while the repository location and designated document directories provide the operational filesystem boundary.
 

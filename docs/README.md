@@ -13,6 +13,8 @@
 
 - [Architecture](ARCHITECTURE.md): components, data flow, ports, state, and
   trust boundaries.
+- [Sandbox boundary](SANDBOX.md): behavioral probes and replacement path for
+  deprecated `sandbox-exec`.
 - [Network and process isolation](../config/firewall/README.md): threat model
   and enforcement layers.
 - [Bounded agents](../agents/README.md): roles, permissions, and delegation.

@@ -13,13 +13,13 @@ require_command shellcheck
 require_command sandbox-exec
 
 jq empty opencode.json
-shellcheck -s bash -e SC1091 tools/*.sh tools/model/*.sh tools/opencode/*.sh tests/*.sh
+shellcheck -s bash -e SC1091 tools/*.sh tools/model/*.sh tools/opencode/*.sh tools/web/*.sh tools/workbench/*.sh tests/*.sh
 python3 tests/test_policy.py
 python3 tests/test_documentation.py
-python3 tools/sandbox-probe.py --profile config/firewall/opencode.sb
 
 for profile in config/firewall/*.sb; do
   sandbox-exec -f "${profile}" /usr/bin/true
+  python3 tools/sandbox-probe.py --profile "${profile}"
 done
 
 print -- "Workbench checks passed."

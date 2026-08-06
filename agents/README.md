@@ -9,7 +9,8 @@ serialized by llama.cpp (`--parallel 1`), and subagents cannot delegate again.
   cannot use web tools directly.
 - `researcher`: can use only the `local-safe-web` MCP tool namespace.
 - `explorer`: read/glob/grep inspection only.
-- `implementer`: repository reads and scoped edits; web and delegation denied.
+- `implementer`: repository reads and scoped edits; firewall, gateway, originals,
+  version pins, and `opencode.json` are denied; web and delegation denied.
 - `reviewer`: read/glob/grep inspection only.
 - `document-specialist`: reads broadly but writes only canonical Markdown,
   manifests, and output paths.

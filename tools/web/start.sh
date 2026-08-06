@@ -5,6 +5,8 @@ script_dir="${0:A:h}"
 source "${script_dir}/../common.sh"
 root="$(repo_root)"
 source "${root}/config/web/runtime.env"
+assert_loopback "${SEARXNG_HOST}"
+assert_loopback "${WEB_GATEWAY_HOST}"
 
 python_bin="${root}/${SEARCH_PYTHON}"
 searxng_run="${root}/.venv/search/bin/searxng-run"
@@ -36,7 +38,7 @@ cleanup() {
 }
 trap cleanup INT TERM EXIT
 
-for attempt in {1..40}; do
+for _ in {1..40}; do
   if ! kill -0 "${searx_pid}" 2>/dev/null || ! kill -0 "${gateway_pid}" 2>/dev/null; then
     die "search services exited during startup; inspect .runtime/logs"
   fi

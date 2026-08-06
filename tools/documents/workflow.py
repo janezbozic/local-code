@@ -127,6 +127,8 @@ def import_document(source: pathlib.Path) -> None:
     ORIGINALS.mkdir(parents=True, exist_ok=True)
     if not original.exists():
         shutil.copy2(source, original)
+    elif sha256(original) != digest:
+        raise ValueError(f"existing original does not match source digest: {original}")
     text, count, converter = extract(original)
     canonical = MARKDOWN / f"{source.stem}.md"
     write_new(canonical, f"# {source.stem}\n\n{text.strip()}\n")
@@ -169,6 +171,8 @@ def export_document(source: pathlib.Path, fmt: str) -> None:
 
 def render_document(source: pathlib.Path) -> None:
     source = source.resolve(strict=True)
+    if not source.is_relative_to(OUTPUT):
+        raise ValueError("renders must originate from output/")
     render_dir = OUTPUT / "rendered" / source.stem
     if render_dir.exists():
         raise ValueError(f"refusing to overwrite render directory: {render_dir}")
